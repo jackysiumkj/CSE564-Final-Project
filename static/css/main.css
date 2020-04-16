@@ -1,0 +1,93 @@
+body {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+#title {
+  margin: 32px 0 8px;
+  width: 100%;
+  text-align: center;
+  background: #5f7e8c;
+  padding: 8px;
+  color: #fff;
+}
+
+#subtitle {
+  margin-top: 8px;
+  color: #254b5d;
+}
+
+#divider {
+  width: 100%;
+  color: #5f7e8c;
+}
+
+#menu-div {
+  width: 80%;
+  display: flex;
+}
+
+#selector-div-non-his {
+  display: flex;
+  flex: 1;
+}
+
+#selector-div-his {
+  display: none;
+  flex: 1;
+}
+
+#tag-div {
+  display: flex;
+}
+
+#tag-div > span {
+  margin-left: 4px;
+  margin-right: 4px;
+  padding: 4px 16px;
+  cursor: pointer;
+}
+
+.x-axis {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+#loading-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 680px;
+}
+
+#loading-div > p {
+  color: #5f7e8c;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+#value-label {
+  pointer-events: none;
+}
+
+.-alert-content {
+  padding-left: 32px;
+}
+
+#tooltip-div {
+  z-index: 999;
+  position: absolute;
+  top: 120px;
+  width: 60vw;
+  padding: 16px 32px;
+  border-radius: 16px;
+  pointer-events: none;
+  display: none;
+  opacity: 0;
+}
+
+#_spinner {
+  margin-top: 160px;
+}

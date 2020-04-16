@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>CSE564 2020 Spring Assignment 2</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+  <h1 id="title">SBU, Spring 2020, CSE 564 Assignment 2</h1>
+  <h4 id="subtitle">Author: Kai-Chieh Huang, SBU ID #112676186</h4>
+  <hr id="divider" />
+  <div id="menu-div">
+    <div id="selector-div-non-his">
+      <div class="input-group mr-3" style="flex: 1; width: unset;">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="order-selector">Display</label>
+        </div>
+        <select class="custom-select" id="order-selector" onchange="handleDataOnChange(this.value)">
+          <option selected value="pca">PCA</option>
+          <option value="top_two_pca">Top Two PC</option>
+          <option value="mds">MDS</option>
+          <option value="three_highest_pca">Three Highest PC</option>
+        </select>
+      </div>
+      <div id="pca_menu">
+        <button
+          id="org_btn"
+          type="button"
+          class="btn btn-primary mr-3"
+          onclick="handlePCADataOnClick('org')"
+        >
+          Original
+        </button>
+        <button
+          id="rnd_btn"
+          type="button"
+          class="btn btn-outline-primary mr-3"
+          onclick="handlePCADataOnClick('rnd')"
+        >
+          Random
+        </button>
+        <button
+          id="str_btn"
+          type="button"
+          class="btn btn-outline-primary"
+          onclick="handlePCADataOnClick('str')"
+        >
+          Stratify
+        </button>
+      </div>
+      <div id="dataset_select_box" class="input-group mr-3" style="flex: 1; width: unset; display: none;">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="dataset-selector">Dataset</label>
+        </div>
+        <select class="custom-select" id="dataset-selector" onchange="handleDataSetOnChange(this.value)">
+          <option value="org">Original</option>
+          <option value="rnd">Random</option>
+          <option selected value="str">Stratify</option>
+        </select>
+      </div>
+      <div id="mds_menu" style="display: none;">
+        <button
+          id="euclidean_btn"
+          type="button"
+          class="btn btn-primary mr-3"
+          onclick="handleMDSDataOnClick('euclidean')"
+        >
+          Euclidean
+        </button>
+        <button
+          id="correlation_btn"
+          type="button"
+          class="btn btn-outline-primary"
+          onclick="handleMDSDataOnClick('correlation')"
+        >
+          Correlation
+        </button>
+      </div>
+    </div>
+  </div>
+  <hr id="divider" />
+  <div id="_spinner" class="spinner-grow" role="status" style="display: none;"></div>
+  <svg id="chart" ></svg>
+  <script>
+    // First load only
+    const host = 'http://localhost:3002';
+    let data = [];
+    const labels = [
+      'Bronx',
+      'Brooklyn',
+      'Manhattan',
+      'Queens',
+      'Staten Island',
+    ];
+    
+  </script>
+  <!-- <script src="./js/lodash.min.js"></script>
+  <script src="./js/moment.min.js"></script>
+  <script src="./js/d3_bar_chart_script.js"></script>
+  <script src="./js/d3_pie_chart_script.js"></script>
+  <script src="./js/d3_histogram_script.js"></script> -->
+  <script src="{{ url_for('static', filename='js/d3_pca_scatterplot.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/d3_ttpca_scatterplot.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/d3_mds_scatterplot.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/d3_t3_pca_scatterplot.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/menu_script.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/d3.min.js') }}" onload="prepare_data()"></script>
+</bod>
+</html>
