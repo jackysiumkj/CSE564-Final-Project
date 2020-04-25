@@ -66,7 +66,7 @@ if __name__ == "__main__":
     #DowJones['Normalize_Adj_Close'] = pd.DataFrame(x_DowJones_scaled)
     #NASDAQ['Normalize_Adj_Close'] = pd.DataFrame(x_NASDAQ_scaled)
     
-    '''
+    
     stop = stopwords.words('english')   
     trump =  trump.head(50)
     trump["t_content"]  = trump['content'].str.replace('http\S+|www.\S+', '', case=False)
@@ -76,7 +76,7 @@ if __name__ == "__main__":
     trump["Subjectivity"] = trump.t_content.map(lambda x:subjectivity_analysis(x) )
     trump = json.dumps(trump.to_dict(orient='records'), indent=2)
     print(trump)
-    '''
+    
     
     #trump["date"] = trump.sort_values('date', ascending=True)
     #print(trump["date"])

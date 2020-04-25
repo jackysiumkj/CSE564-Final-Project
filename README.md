@@ -1,6 +1,64 @@
 # CSE564-Final-Project
 
 ## API usage
+#### tweets with sentiment()
+- Route: /
+- Type: JSON
+- JSON example:
+```
+{
+"id": "5069623974",
+"date": "2009-10-22 08:57:04",
+"content": "Hear Donald Trump discuss big gov spending
+"retweets": 6,
+"favorites": 6,
+"t_content": "hear donald trump discuss big gov spending (After Processing)
+"Sentiment": -0.31, (Sentiment Score)
+"Subjectivity": 0.1 (Subjectivity Score)
+}
+```
+#### stock()
+- Route: /stock
+- Type: JSON
+- JSON example:
+```
+{   
+"Date": "2019-09-09"
+"Adj Close": 26835.509766,
+"Normalize_Adj_Close": 0.8731173624527795 
+}
+```
+#### oil_price()
+- Route: /oil_price
+- Type: JSON
+- JSON example:
+```
+{  
+"date": "2020-04-21",
+" value": 9.12
+}
+```
+
+#### currency()
+- Route: /currency
+- Type: JSON
+- JSON example:  
+```
+} 
+"date": "2020-04-21",
+" value": 1.0855
+}
+```
+#### housing 
+- Route: /housing
+- Type: JSON
+- JSON example:  
+```
+  {
+  "date": "2020-01-31",
+  "housing_price": 154547.0
+  }
+```
 
 
 ## Datasets
