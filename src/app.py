@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import json
 import matplotlib.pyplot as plt
-from IPython.core.display import display
+
 from sklearn.model_selection import train_test_split
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
