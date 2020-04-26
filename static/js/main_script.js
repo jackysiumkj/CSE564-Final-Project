@@ -14,8 +14,12 @@ const prepare_data = async () => {
   relatedRatesWrap.addEventListener('scroll', () => { tweetsWrap.scrollLeft = relatedRatesWrap.scrollLeft; }, false);
 
   try {
-    const res = await fetch('/tweets');
-    rawTweets = await res.json();
+    const tweetsRes = await fetch('/tweets');
+    rawTweets = await tweetsRes.json();
+
+    const oilPriceRes = await fetch('/oil_prices');
+    rawOilPrices = JSON.parse(await oilPriceRes.json());
+
     draw_tweets();
     draw_related_rates();
 

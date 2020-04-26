@@ -1,5 +1,7 @@
 const draw_related_rates = () => {
 
+  console.log(rawOilPrices);
+
   let dates = _.keys(rawTweets);
   let groupedTweets = _.values(rawTweets);
 
