@@ -8,6 +8,7 @@ import nltk
 nltk.download('stopwords')
 from nltk.corpus import stopwords
 import datetime
+from datetime import datetime
 '''
 Load trump
 
@@ -16,7 +17,7 @@ for line in open('realdonaldtrump.csv', 'r'):
     reviews_train.append(line.strip())
 '''
 trump = pd.read_csv('realdonaldtrump.csv')
-trump = pd.DataFrame(trump, columns = ['id', 'date','content','retweets','favorites'])
+trump = pd.DataFrame(trump, columns = ['date','content','retweets','favorites'])
 sp = pd.read_csv('S&P.csv')
 sp = pd.DataFrame(sp, columns = ['Date', 'Adj Close'])
 DowJones = pd.read_csv('DowJones.csv')
@@ -25,7 +26,7 @@ NASDAQ = pd.read_csv('NASDAQ.csv')
 NASDAQ = pd.DataFrame(NASDAQ, columns = ['Date', 'Adj Close'])
 housing = pd.read_csv('US_Housing_Price.csv')
 housing = pd.DataFrame(housing, columns = ['date', 'housing_price'])
-print(housing)
+
 # Processing trump with regular expression
 REPLACE_NO_SPACE = re.compile("[.;:!\'?,\"()\[\]]")
 REPLACE_WITH_SPACE = re.compile("(<br\s*/><br\s*/>)|(\-)|(\/)")
@@ -66,17 +67,29 @@ if __name__ == "__main__":
     #DowJones['Normalize_Adj_Close'] = pd.DataFrame(x_DowJones_scaled)
     #NASDAQ['Normalize_Adj_Close'] = pd.DataFrame(x_NASDAQ_scaled)
     
-    '''
-    stop = stopwords.words('english')   
-    trump =  trump.head(50)
+    
+    stop = stopwords.words('english') 
+    #trump =  trump.head(50)
+    #trump['date'] = pd.to_datetime(trump['date']).dt.normalize()
+
+
     trump["t_content"]  = trump['content'].str.replace('http\S+|www.\S+', '', case=False)
     trump["t_content"] = trump["t_content"].map(lambda x:preprocess_reviews(x) )
     trump["t_content"]  = trump["t_content"].apply(lambda x: ' '.join([item for item in x.split() if item not in stop]))
     trump["Sentiment"] = trump.t_content.map(lambda x:sentiment_analysis(x) )
     trump["Subjectivity"] = trump.t_content.map(lambda x:subjectivity_analysis(x) )
-    trump = json.dumps(trump.to_dict(orient='records'), indent=2)
-    print(trump)
-    '''
+
+
+    trump['date'] = pd.to_datetime(trump['date']).dt.strftime('%Y-%m-%d')
+
+    #trump['date'] = pd.to_datetime(trump['date']).dt.date
+    trump = trump.groupby('date') 
+    trump = trump.apply(lambda x: x.to_json(orient='records'))
+    
+    #trump = json.dumps(trump.to_dict(orient='records'), indent=2)
+   
+     
+    
     
     #trump["date"] = trump.sort_values('date', ascending=True)
     #print(trump["date"])
