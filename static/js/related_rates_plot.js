@@ -35,9 +35,8 @@ const draw_related_rates = () => {
 //     .domain([0, _.max(_.map(groupedTweets, tweets => _.size(tweets)))])
 //     .range([height, 0]);
 
-  let xAxis = g => g.call(d3.axisTop(x).tickFormat((d, i) => (
-    (i === 0 || /\d{4}-\d{2}-01/.test(d)) ? d : d.substring(8)
-  )));
+  let dayXAxis = g => g.call(d3.axisTop(x).tickFormat((d, i) => (i === 0 || /\d{4}-\d{2}-01/.test(d)) ? '|' : d.substring(8)));
+  let dateXAxis = g => g.call(d3.axisTop(x).tickFormat((d, i) => (i === 0 || /\d{4}-\d{2}-01/.test(d)) ? d : '' ));
 //   let yAxis = g => g.call(d3.axisLeft(y));
 
 //   let stackBars = svg.selectAll('g.tweet')
@@ -86,15 +85,17 @@ const draw_related_rates = () => {
 //   //   // .on('click', disableOnClick ? null : barOnClickHandler);
 
   svg.append('g')
-    // .attr('transform', 'translate(0,' + 0 + ')')
-    .call(xAxis)
+    .call(dayXAxis)
   .selectAll('text')
-    .attr('y', (d, i) => (
-      (i === 0 || /\d{4}-\d{2}-01/.test(d)) ? 32 : 16
-    ))
-    // .attr('x', -8)
+    .attr('y', 16)
     .attr('dy', '.35em')
-    // .attr('transform', d => 'rotate(-60)')
+    .attr('text-anchor', 'middle');
+  
+  svg.append('g')
+    .call(dateXAxis)
+  .selectAll('text')
+    .attr('y', 32)
+    .attr('dy', '.35em')
     .attr('text-anchor', 'middle');
 
 //   svg.append('g')
