@@ -1,3 +1,6 @@
+let color = null;
+let tweetColorBy = 'favorites';
+
 const draw_tweets = () => {
 
   let dates = _.keys(rawTweets);
@@ -24,6 +27,8 @@ const draw_tweets = () => {
     .attr('width', width + horiMargin)
   .append('g')
     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+  color = d3.scaleLinear() .range([mainColor, mainColor]);
   
   let x = d3.scaleBand()
     .domain(dates)
@@ -42,7 +47,6 @@ const draw_tweets = () => {
     .enter()
   .append('g')
     .attr('class', 'g');
-    // .attr('transform', function(d) { return "translate(" + x0(d.State) + ",0)"; });
  
   stackBars.selectAll('rect')
     .data(d => d)
@@ -54,10 +58,7 @@ const draw_tweets = () => {
     .attr('width', x.bandwidth())
     .attr('height', (d, i) => y(i) - y(i + 1) - 1)
     .style('fill', '#00acee')
-    .attr('data-toggle', 'popover')
-    .attr('title', 'hover')
-    .attr('trigger', 'hover')
-    .attr('content', 'content')
+    .attr('id', (d, i) => `rect_${d.date}_${i}`)
     .on('mouseover', blockMouseoverHandler)
     .on('mouseout', blockMouseoutHandler)
     .on('click', blockOnClickHandler);
@@ -104,13 +105,13 @@ const draw_tweets = () => {
   .append('text')
     .attr('x', 8)
     .attr('y', 16)
+    .attr('class', '#607e8c')
     .attr('fill', '#607e8c')
     .attr('font-size', '12px')
     .attr('font-weight', 'bold')
-    .attr('text-anchor', 'end')
-    .attr('transform', 'rotate(-90)')
+    .attr('text-anchor', 'start')
     .text('Number of Tweets');
-
+    
   svg.selectAll('.y')
     .transition()
     .duration(500)
@@ -121,8 +122,8 @@ const draw_tweets = () => {
     d3.select(this)
       .transition()
       .duration(100)
-      .style('fill', '#0180b1')
-      .attr('stroke', '#0180b1');
+      .style('fill', d3.rgb(color(tweet[tweetColorBy])).darker(2))
+      .attr('stroke', d3.rgb(color(tweet[tweetColorBy])).darker(2));
 
     d3.select('#tooltip-div')
       .transition()		
@@ -140,7 +141,7 @@ const draw_tweets = () => {
     d3.select(this)
       .transition()
       .duration(100)
-      .style('fill', '#00acee')
+      .style('fill', color(tweet[tweetColorBy]))
       .attr('stroke', 'none');
     
     d3.select('#tooltip-div')
@@ -156,7 +157,34 @@ const draw_tweets = () => {
     document.getElementById('tweet-favorites').innerHTML = tweet.favorites;
     document.getElementById('tweet-sentiment').innerHTML = tweet.Sentiment;
     document.getElementById('tweet-subjectivity').innerHTML = tweet.Subjectivity;
-
-    console.log(tweet);
   }
+}
+
+
+function handleTweetColorOnChange(value) {
+  const colorSet = {
+    retweets: '#17bf63',
+    favorites: '#e0245e',
+    Sentiment: '#ff8bdf',
+  }
+  const groupedTweets = _.values(rawTweets);
+  tweetColorBy = value;
+  
+  if ('default' === tweetColorBy) {
+    color = d3.scaleLinear() .range([mainColor, mainColor]);
+    tweetColorBy = 'favorites';
+  }
+  else {
+    let max = _.chain(groupedTweets).map(tweets => _.map(tweets, tweetColorBy)).flatten().max().value();
+    let min = _.chain(groupedTweets).map(tweets => _.map(tweets, tweetColorBy)).flatten().min().value();
+    color = d3.scaleLinear()
+      .domain([min, max])
+      .range([secondaryColor, colorSet[tweetColorBy]]);
+  }
+
+  _.each(groupedTweets, tweets => {
+    _.each(tweets, (tweet, index) => {
+      d3.select(`#rect_${tweet.date}_${index}`).style('fill', color(tweet[tweetColorBy]));
+    });
+  });
 }

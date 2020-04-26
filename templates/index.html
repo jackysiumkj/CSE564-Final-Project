@@ -69,13 +69,28 @@
   <div id="tooltip-div" class="shadow" style="opacity: 0;">
     <p id="tooltip-content"></p>
   </div>
+  <div id="tweets-color-group" class="input-group flex-row">
+    <div class="input-group-prepend">
+      <label class="input-group-text" for="tweets-color-selector">Colored by</label>
+    </div>
+    <select class="custom-select" id="tweets-color-selector" onchange="handleTweetColorOnChange(this.value)">
+      <option selected value="default">Default</option>
+      <option value="retweets">Retweets</option>
+      <option value="favorites">Likes</option>
+      <option value="Sentiment">Sentiment Score</option>
+    </select>
+  </div>
+  </select>
   <!-- <div id="_spinner" class="spinner-grow" role="status" style="display: none;"></div> -->
   <!-- <svg id="chart" ></svg> -->
   <script>
     // First load only
     const host = 'http://localhost:3002';
+    const mainColor = '#00acee';
+    const secondaryColor = '#ececec';
     let tweetResponse = null;
     let sharedWidth = 0;
+    
   </script>
   <script src="{{ url_for('static', filename='js/chart_for_dataset.js') }}"></script>
   <script src="{{ url_for('static', filename='js/related_rates_plot.js') }}"></script>

@@ -3,7 +3,7 @@
 }
 
 p {
-  font-size: 16px;
+  font-size: 13px;
 }
 
 body {
@@ -63,6 +63,24 @@ div {
 
 .tweet-detail-block > div {
   margin: 8px 0;
+}
+
+#tweets-color-group {
+  position: fixed;
+  right: calc(40% + 24px);
+  top: 48px;
+  width: auto;
+}
+
+#tweets-color-group * {
+  font-size: 13px;
+  height: unset;
+  border-color: #00acee;
+}
+
+#tweets-color-group label {
+  color: #fff;
+  background: #00acee;
 }
 
 .detail-wrap {
