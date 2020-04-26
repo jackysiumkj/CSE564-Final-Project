@@ -21,9 +21,9 @@ app = Flask(__name__)
 @app.route("/", methods = ['POST', 'GET'])
 def index():
     global trump
-    data = json.dumps(trump.to_dict(orient='records'), indent=2)
-    #print(jsonify(trump))
-    return jsonify(data)
+    data = trump.apply(lambda x: x.to_json(orient='records'))
+    
+    return data.to_json()
 
 @app.route('/stock', methods = ['POST', 'GET'])
 def stock():
@@ -38,31 +38,33 @@ def stock():
         if request.form['data'] == 'dowjones':
             data = json.dumps(dowjones.to_dict(orient='records'), indent=2)
         return jsonify( {request.form['data']: data})
+    
     data = {
         "sp":json.dumps(sp.to_dict(orient='records'), indent=2),
         "nasdaq":json.dumps(nasdaq.to_dict(orient='records'), indent=2),
         "dowjones":json.dumps(dowjones.to_dict(orient='records'), indent=2)
     }
+    
     return jsonify(data)
   
 @app.route('/oil_price', methods = ['POST', 'GET'])
 def oil_price():
     global oil_price
     data = json.dumps(oil_price.to_dict(orient='records'), indent=2)
-
+    
     return jsonify(data)
 @app.route('/currency', methods = ['POST', 'GET'])
 def currency():
     global currency
     data = json.dumps(currency.to_dict(orient='records'), indent=2)
-
+    
     return jsonify(data)
 
 @app.route('/housing', methods = ['POST', 'GET'])
 def housing():
     global housing
     data = json.dumps(housing.to_dict(orient='records'), indent=2)
-
+    
     return jsonify(data)
 
 # Processing data with regular expression
@@ -87,7 +89,7 @@ def subjectivity_analysis(text):
 if __name__ == "__main__":
     # Load data
     trump = pd.read_csv('realdonaldtrump.csv')
-    trump = pd.DataFrame(trump, columns = ['id', 'date','content','retweets','favorites'])
+    trump = pd.DataFrame(trump, columns = ['date','content','retweets','favorites'])
     sp = pd.read_csv('S&P.csv')
     sp = pd.DataFrame(sp, columns = ['Date', 'Adj Close'])
     dowjones = pd.read_csv('dowjones.csv')
@@ -108,12 +110,15 @@ if __name__ == "__main__":
 
     # Processing Sentiment Score 
     stop = stopwords.words('english')   
-    trump =  trump.head(50)
+    #trump =  trump.head(50)
     trump["t_content"]  = trump['content'].str.replace('http\S+|www.\S+', '', case=False)
     trump["t_content"] = trump["t_content"].map(lambda x:preprocess_reviews(x) )
     trump["t_content"]  = trump["t_content"].apply(lambda x: ' '.join([item for item in x.split() if item not in stop]))
     trump["Sentiment"] = trump.t_content.map(lambda x:sentiment_analysis(x) )
     trump["Subjectivity"] = trump.t_content.map(lambda x:subjectivity_analysis(x) )   
+    trump['date']  =pd.to_datetime(trump['date']).dt.strftime('%Y-%m-%d')
+    trump = trump.groupby('date') 
+    
     
     # Processing stock data
     x_sp = sp[['Adj Close']].values.astype(float)
