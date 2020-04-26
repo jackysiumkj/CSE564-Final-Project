@@ -28,6 +28,7 @@ div {
   margin-right: 24px;
   flex-shrink: 0;
   flex-basis: 60%;
+  width: 60%;
 }
 
 .right-root {
@@ -67,12 +68,16 @@ div {
   margin: 0;
 }
 
-.svg {
+.svg-wrap-div {
   flex: 1;
   flex-shrink: 0;
   margin: 8px 0;
+  overflow-x: auto;
+}
 
-  background: #00acee;
+.svg {
+  flex: 1;
+  flex-shrink: 0;
 }
 
 #tooltip-div {

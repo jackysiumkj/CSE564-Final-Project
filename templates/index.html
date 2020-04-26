@@ -12,10 +12,14 @@
   <div class="root left-root shadow">
     <div class="left-top-block">
       <h5 class="subtitle">Tweets from President Trump</h5>
-      <svg class="svg" id='#tweets-svg'></svg>
+      <div class="svg-wrap-div" id="tweets-wrap">
+        <svg class="svg" id="tweets-svg"></svg>
+      </div>
     </div>
     <div class="left-bottom-block">
-      <svg class="svg" id='#tweets-svg'></svg>
+      <div class="svg-wrap-div" id="related-rates-wrap">
+        <svg class="svg" id="related-rates-svg"></svg>
+      </div>
       <h5 class="subtitle">Rates Related to Tweets</h5>
     </div>
   </div>
@@ -28,7 +32,7 @@
     </div>
     <div class="more-block">
       <h5 class="subtitle">Chart of Each Dataset</h5>
-      <svg class="svg" id='#tweets-svg'></svg>
+      <svg class="svg" id="dataset-svg"></svg>
     </div>
     <div class="footer">
       <p><b>Author</b> Kai-Chieh Huang <span class="text-muted">112676186</span>, Hsien-Yi Liu <span class="text-muted">112675266</span></p>
@@ -42,21 +46,15 @@
   <script>
     // First load only
     const host = 'http://localhost:3002';
-    let data = [];
-    const labels = [
-      'Bronx',
-      'Brooklyn',
-      'Manhattan',
-      'Queens',
-      'Staten Island',
-    ];
-    
+    let tweetResponse = null;
+    let sharedWidth = 0;
   </script>
-  <script src="{{ url_for('static', filename='js/d3_pca_scatterplot.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/d3_ttpca_scatterplot.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/d3_mds_scatterplot.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/d3_t3_pca_scatterplot.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/menu_script.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/chart_for_dataset.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/related_rates_plot.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/tweet_plot.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/main_script.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/lodash.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/d3.min.js') }}" onload="prepare_data()"></script>
 </bod>
 </html>
