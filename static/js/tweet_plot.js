@@ -2,36 +2,24 @@ let color = null;
 let tweetColorBy = 'favorites';
 
 const draw_tweets = () => {
-
-  let dates = _.keys(rawTweets);
   let groupedTweets = _.values(rawTweets);
 
   // d3.select('#tweets-svg').selectAll('*').remove();
-  const margin = {
-    top: 4, 
-    right: 32, 
-    bottom: 4, 
-    left: 32
-  };
-  
   let svg = d3.select('#tweets-svg');
   
-  let horiMargin = margin.left + margin.right;
-  let width = _.toNumber(svg.style('width').replace('px', '')) - horiMargin;
-  if (width < _.size(dates) * 28 + horiMargin) width = _.size(dates) * 28;
-  const height = _.toNumber(svg.style('height').replace('px', '')) - margin.top - margin.bottom;
-
-  sharedWidth = width + horiMargin;
+  let horiMargin = sharedMargin.left + sharedMargin.right;
+  let width = sharedWidth - horiMargin;
+  const height = _.toNumber(svg.style('height').replace('px', '')) - sharedMargin.top - sharedMargin.bottom;
 
   svg = svg
-    .attr('width', width + horiMargin)
+    .attr('width', sharedWidth)
   .append('g')
-    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+    .attr('transform', 'translate(' + sharedMargin.left + ',' + sharedMargin.top + ')');
 
   color = d3.scaleLinear() .range([mainColor, mainColor]);
   
   let x = d3.scaleBand()
-    .domain(dates)
+    .domain(sharedDates)
     .rangeRound([0, width])
     .paddingInner(.2);
 

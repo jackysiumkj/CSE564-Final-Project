@@ -88,9 +88,18 @@
     const host = 'http://localhost:3002';
     const mainColor = '#00acee';
     const secondaryColor = '#ececec';
-    let tweetResponse = null;
+    let rawTweets = null;
+    let rawOilPrices = null;
+
     let sharedWidth = 0;
-    
+    const sharedMargin = {
+      top: 4, 
+      right: 32, 
+      bottom: 4, 
+      left: 32
+    };
+    let sharedDates = [];
+
   </script>
   <script src="{{ url_for('static', filename='js/chart_for_dataset.js') }}"></script>
   <script src="{{ url_for('static', filename='js/related_rates_plot.js') }}"></script>

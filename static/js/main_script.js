@@ -7,6 +7,17 @@ const prepare_data = async () => {
   // d3.select('#order-selector').attr('disabled', true);
   // d3.select('#dataset-selector').attr('disabled', true);
 
+  const startDate = moment('2017-08-06');
+  const endDate = moment('2020-04-15');
+  let date = startDate;
+
+  while (date <= endDate) {
+    sharedDates.push(date.format('YYYY-MM-DD'));
+    date = date.clone().add(1, 'd');
+  };
+
+  sharedWidth = _.size(sharedDates) * 28 + sharedMargin.left + sharedMargin.right;
+
   const tweetsWrap = document.getElementById('tweets-wrap');
   const relatedRatesWrap = document.getElementById('related-rates-wrap');
 
