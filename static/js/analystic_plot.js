@@ -174,8 +174,6 @@ async function handleAnaysticSelectorChange(value) {
     const anaRes = await fetch(`/analystic/pca`);
     rawAnaData = JSON.parse(await anaRes.json());
     draw_pca();
-    
-    console.log(rawAnaData);
   }
 
 }

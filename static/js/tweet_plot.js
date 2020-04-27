@@ -118,6 +118,9 @@ const draw_tweets = () => {
     document.getElementById('tweet-sentiment').innerHTML = tweet.Sentiment;
     document.getElementById('tweet-subjectivity').innerHTML = tweet.Subjectivity;
 
+    document.getElementById('tweet-link').href = tweet.link;
+    document.getElementById('tweet-link').target = '_blank';
+
     displayRatesForDetail(tweet.date);
   }
 }
@@ -129,6 +132,9 @@ function cleanTweetDetail(date) {
   document.getElementById('tweet-favorites').innerHTML = '';
   document.getElementById('tweet-sentiment').innerHTML = '';
   document.getElementById('tweet-subjectivity').innerHTML = '';
+
+  document.getElementById('tweet-link').href = '#';
+  document.getElementById('tweet-link').removeAttribute('target');
 }
 
 function handleTweetColorOnChange(value) {

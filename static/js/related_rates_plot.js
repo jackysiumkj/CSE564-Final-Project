@@ -214,8 +214,6 @@ function displayRatesForDetail(date) {
   const rrs = _.find(rrsPrices, { Date: date });
   const houseData = _.find(hoPrices, hoPrice => hoPrice.date.substring(0, 7) === date.substring(0, 7));
 
-  console.log(_.toNumber(rrs.currency_value));
-
   document.getElementById('detail-oi-price').innerHTML = !rrs ? '' : rrs.oil_price;
   document.getElementById('detail-cu-price').innerHTML = !rrs ? '' : _.toNumber(rrs.currency_value).toFixed(2);
   document.getElementById('detail-ho-price').innerHTML = !houseData ? '' : _.toNumber(houseData.value).toFixed(2);

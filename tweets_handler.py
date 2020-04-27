@@ -23,7 +23,7 @@ def subjectivity_analysis(text):
 
 def tweets_handler():
   tweets = pd.read_csv('./src/realdonaldtrump.csv')
-  tweets = pd.DataFrame(tweets, columns = ['date', 'content', 'retweets', 'favorites'])
+  tweets = pd.DataFrame(tweets, columns = ['link', 'date', 'content', 'retweets', 'favorites'])
   
   tweets = tweets.tail(10000)
 
