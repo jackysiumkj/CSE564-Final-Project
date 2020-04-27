@@ -18,6 +18,7 @@ nltk.download('stopwords')
 from nltk.corpus import stopwords
 from mds_handler import get_euclidean, get_correlation
 from mds_data import mds_data
+from sklearn.cluster import KMeans
 app = Flask(__name__)
 
 @app.route("/", methods = ['POST', 'GET'])
@@ -89,6 +90,23 @@ def getMdsData(mds_type):
     res_data = json.dumps(res_data, indent=2)
 
     return jsonify(res_data)
+@app.route('/pca_data', methods = ['GET'])
+def getPcaData():
+    global mds_data
+    pca_data = pd.DataFrame()  
+    pca_data['org'] = np.cumsum(best_pca(mds_data).explained_variance_ratio_)
+    pca_data = pca_data.to_dict('records')
+    pca_data = json.dumps(pca_data, indent=2)
+
+    return jsonify(pca_data)
+
+def best_pca(data):
+    data = data.apply(preprocessing.LabelEncoder().fit_transform)
+    data = data.astype('float64')
+    s_kmeans = KMeans(n_clusters=5).fit(data)
+    pca_dataset = PCA().fit(scale(data))
+    return pca_dataset
+
 # Processing data with regular expression
 REPLACE_NO_SPACE = re.compile("[.;:!\'?,\"()\[\]]")
 REPLACE_WITH_SPACE = re.compile("(<br\s*/><br\s*/>)|(\-)|(\/)")

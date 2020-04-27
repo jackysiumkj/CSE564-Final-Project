@@ -104,7 +104,7 @@ def best_kmean(data):
 def best_pca(data):
     data = data.apply(preprocessing.LabelEncoder().fit_transform)
     data = data.astype('float64')
-    s_kmeans = KMeans(n_clusters=2).fit(data)
+    s_kmeans = KMeans(n_clusters=5).fit(data)
     pca_dataset = PCA().fit(scale(data))
 
     plt.figure()
