@@ -45,15 +45,19 @@
             <p id="tweet-favorites"></p>
           </div>
         </div>
-        <div class="detail-wrap flex-row shadow mt-4 mb-3 justify-content-between">
-          <div class="flex-row">
-            <p><strong>Sentiment Score</strong> </p>
-            <p id="tweet-sentiment"></p>
+        <div class="detail-wrap shadow mt-4 mb-3">
+          <div class="flex-row justify-content-between">
+            <div class="flex-row">
+              <p><strong>Sentiment Score</strong></p>
+              <p id="tweet-sentiment" class="ml-2"></p>
+            </div>
+            <div class="flex-row">
+              <p><strong>Subjectivity</strong></p>
+              <p id="tweet-subjectivity" class="ml-2"></p>
+            </div>
           </div>
-          <div class="flex-row">
-            <p><strong>Subjectivity</strong> </p>
-            <p id="tweet-subjectivity"></p>
-          </div>
+          <hr style="width: calc(100% + 24px); margin: 12px -12px;"/>
+          <p><strong>Oil Price</strong><span class="ml-2" id="detail-oil-price"></span></p>
         </div>
       </div>
     </div>
@@ -80,6 +84,18 @@
       <option value="Sentiment">Sentiment Score</option>
     </select>
   </div>
+  <div id="rr-lagend-group" class="flex-row">
+    <p id="oilPrice_legend" onclick="handleRRLegendOnClick('oilPrice')">
+      <svg class="rr-svg"><rect width="13" height="13" style="fill: #17bf63;"/></svg>Oil Price
+    </p>
+    <p id="housePrice_legend" onclick="handleRRLegendOnClick('housePrice')">
+      <svg class="rr-svg"><rect width="13" height="13" style="fill: #e0245e;"/></svg>Dollar Price
+    </p>
+    <p id="dollarPrice_legend" onclick="handleRRLegendOnClick('dollarPrice')">
+      <svg class="rr-svg"><rect width="13" height="13" style="fill: #ff8bdf;"/></svg>House Price
+    </p>
+  </div>
+  
   </select>
   <!-- <div id="_spinner" class="spinner-grow" role="status" style="display: none;"></div> -->
   <!-- <svg id="chart" ></svg> -->

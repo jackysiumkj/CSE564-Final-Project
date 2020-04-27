@@ -93,7 +93,6 @@ const draw_tweets = () => {
   .append('text')
     .attr('x', 8)
     .attr('y', 16)
-    .attr('class', '#607e8c')
     .attr('fill', '#607e8c')
     .attr('font-size', '12px')
     .attr('font-weight', 'bold')
@@ -145,9 +144,19 @@ const draw_tweets = () => {
     document.getElementById('tweet-favorites').innerHTML = tweet.favorites;
     document.getElementById('tweet-sentiment').innerHTML = tweet.Sentiment;
     document.getElementById('tweet-subjectivity').innerHTML = tweet.Subjectivity;
+
+    displayRatesForDetail(tweet.date);
   }
 }
 
+function cleanTweetDetail(date) {
+  document.getElementById('tweet-date').innerHTML = date;
+  document.getElementById('tweet-content').innerHTML = '';
+  document.getElementById('tweet-retweets').innerHTML = '';
+  document.getElementById('tweet-favorites').innerHTML = '';
+  document.getElementById('tweet-sentiment').innerHTML = '';
+  document.getElementById('tweet-subjectivity').innerHTML = '';
+}
 
 function handleTweetColorOnChange(value) {
   const colorSet = {

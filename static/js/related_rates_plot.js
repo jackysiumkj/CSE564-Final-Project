@@ -1,4 +1,13 @@
-// rawOilPrices
+const relatedRatesColorSet = {
+  oilPrice: '#17bf63',
+  housePrice: '#e0245e',
+  dollarPrice: '#ff8bdf',
+}
+const relatedRatesEnable = {
+  oilPrice: true,
+  housePrice: true,
+  dollarPrice: true,
+}
 
 const draw_related_rates = () => {
 
@@ -14,78 +23,65 @@ const draw_related_rates = () => {
 //   };
   
   let svg = d3.select('#related-rates-svg');
+  let oilPrices = _.filter(rawOilPrices, oil => _.includes(sharedDates, oil.date));
   
   let horiMargin = sharedMargin.left + sharedMargin.right;
   let width = sharedWidth - horiMargin;
-  const height = _.toNumber(svg.style('height').replace('px', '')) - sharedMargin.top - sharedMargin.bottom;
+  const height = _.toNumber(svg.style('height').replace('px', '')) - sharedMargin.top - (sharedMargin.bottom + 16);
 
   svg = svg
     .attr('width', sharedWidth)
   .append('g')
-    .attr('transform', 'translate(' + sharedMargin.left + ',' + sharedMargin.top + ')');
+    .attr('transform', 'translate(' + sharedMargin.left + ',' + (sharedMargin.top - 8) + ')');
 
-//   color = d3.scaleLinear() .range([mainColor, mainColor]);
-  
   let x = d3.scaleBand()
     .domain(sharedDates)
     .rangeRound([0, width])
     .paddingInner(.2);
 
-//   let y = d3.scaleLinear()
-//     .domain([0, _.max(_.map(groupedTweets, tweets => _.size(tweets)))])
-//     .range([height, 0]);
+  console.log(oilPrices);
 
-  let dayXAxis = g => g.call(d3.axisTop(x).tickFormat((d, i) => (i === 0 || /\d{4}-\d{2}-01/.test(d)) ? '|' : d.substring(8)));
-  let dateXAxis = g => g.call(d3.axisTop(x).tickFormat((d, i) => (i === 0 || /\d{4}-\d{2}-01/.test(d)) ? d : '' ));
-//   let yAxis = g => g.call(d3.axisLeft(y));
+  let max = _.max(_.map(oilPrices, 'value')) + 5;
+  let min = _.min(_.map(oilPrices, 'value')) - 5;
 
-//   let stackBars = svg.selectAll('g.tweet')
-//     .data(groupedTweets)
-//     .enter()
-//   .append('g')
-//     .attr('class', 'g');
- 
-//   stackBars.selectAll('rect')
-//     .data(d => d)
-//     .enter()
-//   .append('rect')
-//     .attr('cursor', 'pointer')
-//     .attr('x', (d, i) => x(d.date))
-//     .attr('y', (d, i) => y(i + 1) + 0.5)
-//     .attr('width', x.bandwidth())
-//     .attr('height', (d, i) => y(i) - y(i + 1) - 1)
-//     .style('fill', '#00acee')
-//     .attr('id', (d, i) => `rect_${d.date}_${i}`)
-//     .on('mouseover', blockMouseoverHandler)
-//     .on('mouseout', blockMouseoutHandler)
-//     .on('click', blockOnClickHandler);
-    
-//   // svg.append('g')
-//   //   .selectAll('g.tweet')
-//   //   .data(groupedTweets)
-//   //   .enter()
-//   // .append('g')
-//   //   .attr('class', 'bars')
-//   //   // .attr('cursor', disableOnClick ? 'auto' : 'pointer')
-//   //   // .attr('x', (d, i) => x(dates[i]))
-//   //   // .attr('y', d => y(_.size(d)))
-//   //   .attr('fill', '#00acee')
-//   //   // .attr('width', x.bandwidth())
-//   //   // .attr('height', d => height - y(_.size(d)))
-//   //   .selectAll('g')
-//   // .data(d => d)
-//   //   .enter()
-//   // .append('rect')
-//   //   .attr('x', function(d) { return x(d.x); })
-//   //   .attr('y', function(d) { return y(d.y0 + d.y); })
-//   //   .attr('height', function(d) { return y(d.y0) - y(d.y0 + d.y); })
-//   //   .attr('width', x.rangeBand());
-//   //   // .on('mouseover', mouseoverBarHandler)
-//   //   // .on('mouseout', mouseoutBarHandler)
-//   //   // .on('click', disableOnClick ? null : barOnClickHandler);
+  let oilPriceY = d3.scaleLinear()
+    .domain([min < 0 ? 0 : min, max])
+    .range([height, 48]);
+
+  let oilPriclines = d3.line()
+    .x(d => x(d.date) + x.bandwidth() / 2)
+    .y(d => oilPriceY(d.value))
+    .curve(d3.curveMonotoneX);
+
+  let dayXAxis = g => g.call(d3.axisTop(x).tickFormat((d, i) => (i === 0 || /\d{4}-\d{2}-01/.test(d)) ? '|' : d.substring(8)).tickSize(0));
+  let dateXAxis = g => g.call(d3.axisTop(x).tickFormat((d, i) => (i === 0 || /\d{4}-\d{2}-01/.test(d)) ? d : '' ).tickSize(0));
+  let yAxis = g => g.call(d3.axisLeft(oilPriceY));
+
+  svg.append('path')
+  .data([oilPrices])
+    .attr('id', 'oil_path')
+    .attr('class', `line`)
+    .attr('d', oilPriclines)
+    .attr('fill', 'none')
+    .attr('stroke', relatedRatesColorSet.oilPrice);
+
+  svg.selectAll(`.dot`)
+  .data(oilPrices)
+    .enter()
+  .append('circle')
+    .attr('class', `dot`)
+    .attr('r', 3.5)
+    .attr('cx', d => x(d.date) + x.bandwidth() / 2)
+    .attr('cy', d => oilPriceY(d.value))
+    .attr('fill', relatedRatesColorSet.oilPrice)
+    .attr('cursor', 'pointer')
+    .on('mouseover', dotMouseoverHandler)
+    .on('mouseout', dotMouseoutHandler)
+    .on('click', dotOnClickHandler);
 
   svg.append('g')
     .call(dayXAxis)
+    .call(g => g.select('.domain').remove())
   .selectAll('text')
     .attr('y', 16)
     .attr('dy', '.35em')
@@ -93,98 +89,92 @@ const draw_related_rates = () => {
   
   svg.append('g')
     .call(dateXAxis)
+    .call(g => g.select('.domain').remove())
   .selectAll('text')
     .attr('y', 32)
     .attr('dy', '.35em')
     .attr('text-anchor', 'middle');
 
-//   svg.append('g')
-//     .attr('class', 'y')
-//     .style('opacity','0')
-//     .call(yAxis)
-//   .append('text')
-//     .attr('x', 8)
-//     .attr('y', 16)
-//     .attr('class', '#607e8c')
-//     .attr('fill', '#607e8c')
-//     .attr('font-size', '12px')
-//     .attr('font-weight', 'bold')
-//     .attr('text-anchor', 'start')
-//     .text('Number of Tweets');
+  svg.append('g')
+    .attr('class', 'y')
+    .style('opacity','0')
+    .call(yAxis)
+  .append('text')
+    .attr('x', 8)
+    .attr('y', 72)
+    .attr('class', '#607e8c')
+    .attr('fill', '#607e8c')
+    .attr('font-size', '12px')
+    .attr('font-weight', 'bold')
+    .attr('text-anchor', 'start')
+    .text('Oil Price');
     
-//   svg.selectAll('.y')
-//     .transition()
-//     .duration(500)
-//     .delay(500)
-//     .style('opacity','1');
+  svg.selectAll('.y')
+    .transition()
+    .duration(500)
+    .delay(500)
+    .style('opacity','1');
 
-//   function blockMouseoverHandler(tweet) {
-//     d3.select(this)
-//       .transition()
-//       .duration(100)
-//       .style('fill', d3.rgb(color(tweet[tweetColorBy])).darker(2))
-//       .attr('stroke', d3.rgb(color(tweet[tweetColorBy])).darker(2));
+  function dotMouseoverHandler(data) {
+    d3.select(this)
+      .transition()
+      .duration(100)
+      .style('fill', d3.rgb(relatedRatesColorSet.oilPrice).darker(2))
+      .attr('stroke', d3.rgb(relatedRatesColorSet.oilPrice).darker(2));
 
-//     d3.select('#tooltip-div')
-//       .transition()		
-//       .duration(200)		
-//       .style('opacity', .9);
+    d3.select('#tooltip-div')
+      .transition()		
+      .duration(200)		
+      .style('opacity', .9);
     
-//     d3.select('#tooltip-div')
-//       .style('left', (d3.event.pageX + 24) + 'px')		
-//       .style('top', (d3.event.pageY - 24) + 'px');
+    d3.select('#tooltip-div')
+      .style('left', (d3.event.pageX + 24) + 'px')		
+      .style('top', (d3.event.pageY - 24) + 'px');
     
-//     document.getElementById('tooltip-content').innerHTML = tweet.content;
-//   }
+    document.getElementById('tooltip-content').innerHTML = `${data.value} USD / Gal`;
+  }
 
-//   function blockMouseoutHandler(tweet) {
-//     d3.select(this)
-//       .transition()
-//       .duration(100)
-//       .style('fill', color(tweet[tweetColorBy]))
-//       .attr('stroke', 'none');
+  function dotMouseoutHandler(data) {
+    d3.select(this)
+      .transition()
+      .duration(100)
+      .style('fill', relatedRatesColorSet.oilPrice)
+      .attr('stroke', 'none');
     
-//     d3.select('#tooltip-div')
-//       .transition()	
-//       .duration(200)
-//       .style('opacity', 0);
-//   }
+    d3.select('#tooltip-div')
+      .transition()	
+      .duration(200)
+      .style('opacity', 0);
+  }
 
-//   function blockOnClickHandler(tweet) {
-//     document.getElementById('tweet-date').innerHTML = tweet.date;
-//     document.getElementById('tweet-content').innerHTML = tweet.content;
-//     document.getElementById('tweet-retweets').innerHTML = tweet.retweets;
-//     document.getElementById('tweet-favorites').innerHTML = tweet.favorites;
-//     document.getElementById('tweet-sentiment').innerHTML = tweet.Sentiment;
-//     document.getElementById('tweet-subjectivity').innerHTML = tweet.Subjectivity;
-//   }
-// }
+  function dotOnClickHandler(data) {
+    displayRatesForDetail(data.date);
+    cleanTweetDetail(data.date);
+  }
+}
 
+function displayRatesForDetail(date) {
 
-// function handleTweetColorOnChange(value) {
-//   const colorSet = {
-//     retweets: '#17bf63',
-//     favorites: '#e0245e',
-//     Sentiment: '#ff8bdf',
-//   }
-//   const groupedTweets = _.values(rawTweets);
-//   tweetColorBy = value;
-  
-//   if ('default' === tweetColorBy) {
-//     color = d3.scaleLinear() .range([mainColor, mainColor]);
-//     tweetColorBy = 'favorites';
-//   }
-//   else {
-//     let max = _.chain(groupedTweets).map(tweets => _.map(tweets, tweetColorBy)).flatten().max().value();
-//     let min = _.chain(groupedTweets).map(tweets => _.map(tweets, tweetColorBy)).flatten().min().value();
-//     color = d3.scaleLinear()
-//       .domain([min, max])
-//       .range([secondaryColor, colorSet[tweetColorBy]]);
-//   }
+  // function getXY(len) {
+  //   var point = oilPath.getPointAtLength(len);
+  //   return [point.x, point.y];
+  // }
+  // let curlen = 0;
+  // while (getXY(curlen)[0] < 5) { curlen += 0.01; }
+  // console.log(getXY(curlen));
 
-//   _.each(groupedTweets, tweets => {
-//     _.each(tweets, (tweet, index) => {
-//       d3.select(`#rect_${tweet.date}_${index}`).style('fill', color(tweet[tweetColorBy]));
-//     });
-//   });
+  // let indexOfRates = _.findIndex(rawOilPrices, { date: tweet.date });
+  // if (indexOfRates === -1) return;
+  // let relatedRates = rawOilPrices[indexOfRates];
+  // if (relatedRates.value) document.getElementById('detail-oil-price').innerHTML = `${relatedRates.value} USD / Gal`;
+  // else {
+    
+  // }
+}
+
+function handleRRLegendOnClick(value) {
+  relatedRatesEnable[value] = !relatedRatesEnable[value];
+
+  let isEnabled = relatedRatesEnable[value];
+  document.getElementById(`${value}_legend`).style.opacity = isEnabled ? 1 : 0.5;
 }
