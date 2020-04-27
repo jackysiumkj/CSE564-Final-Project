@@ -173,7 +173,7 @@ div {
 }
 
 #rr-lagend-group {
-  width: 480px;
+  width: 640px;
   position: fixed;
   right: calc(40% + 24px);
   bottom: 48px;

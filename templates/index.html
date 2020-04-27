@@ -57,7 +57,13 @@
             </div>
           </div>
           <hr style="width: calc(100% + 24px); margin: 12px -12px;"/>
-          <p><strong>Oil Price</strong><span class="ml-2" id="detail-oil-price"></span></p>
+          <p><strong>Oil Price</strong><span class="ml-2" id="detail-oi-price"></span> USD/bbl (1 bbl = 120L)</p>
+          <p><strong>Currency</strong><span class="ml-2" id="detail-cu-price"></span> EUR to USD</p>
+          <p><strong>Avg. House Price</strong><span class="ml-2" id="detail-ho-price"></span> USD</p>
+          <p><strong>Stock</strong></p>
+          <p><strong class="ml-3">S&P 500 Close Price</strong><span class="ml-2" id="detail-sp-price"></span> USD</p>
+          <p><strong class="ml-3">Dow Jones Close Price</strong><span class="ml-2" id="detail-dj-price"></span> USD</p>
+          <p><strong class="ml-3">NASDAQ Close Price</strong><span class="ml-2" id="detail-nd-price"></span> USD</p>
         </div>
       </div>
     </div>
@@ -78,21 +84,29 @@
       <label class="input-group-text" for="tweets-color-selector">Colored by</label>
     </div>
     <select class="custom-select" id="tweets-color-selector" onchange="handleTweetColorOnChange(this.value)">
-      <option selected value="default">Default</option>
-      <option value="retweets">Retweets</option>
+      <option selected value="retweets">Retweets</option>
       <option value="favorites">Likes</option>
       <option value="Sentiment">Sentiment Score</option>
     </select>
   </div>
   <div id="rr-lagend-group" class="flex-row">
-    <p id="oilPrice_legend" onclick="handleRRLegendOnClick('oilPrice')">
+    <p id="oi_legend" onclick="handleRRLegendOnClick('oi')">
       <svg class="rr-svg"><rect width="13" height="13" style="fill: #17bf63;"/></svg>Oil Price
     </p>
-    <p id="housePrice_legend" onclick="handleRRLegendOnClick('housePrice')">
-      <svg class="rr-svg"><rect width="13" height="13" style="fill: #e0245e;"/></svg>Dollar Price
+    <p id="cu_legend" onclick="handleRRLegendOnClick('cu')">
+      <svg class="rr-svg"><rect width="13" height="13" style="fill: #e0245e;"/></svg>Currency
     </p>
-    <p id="dollarPrice_legend" onclick="handleRRLegendOnClick('dollarPrice')">
-      <svg class="rr-svg"><rect width="13" height="13" style="fill: #ff8bdf;"/></svg>House Price
+    <p id="ho_legend" onclick="handleRRLegendOnClick('ho')">
+      <svg class="rr-svg"><rect width="13" height="13" style="fill: #2378f5;"/></svg>House Price
+    </p>
+    <p id="sp_legend" onclick="handleRRLegendOnClick('sp')">
+      <svg class="rr-svg"><rect width="13" height="13" style="fill: #e2950c;"/></svg>S&P 500
+    </p>
+    <p id="dj_legend" onclick="handleRRLegendOnClick('dj')">
+      <svg class="rr-svg"><rect width="13" height="13" style="fill: #7841ff;"/></svg>Dow Jones
+    </p>
+    <p id="nd_legend" onclick="handleRRLegendOnClick('nd')">
+      <svg class="rr-svg"><rect width="13" height="13" style="fill: #fc74ff;"/></svg>NASDAQ
     </p>
   </div>
   
@@ -105,7 +119,17 @@
     const mainColor = '#00acee';
     const secondaryColor = '#ececec';
     let rawTweets = null;
-    let rawOilPrices = null;
+    let rawRRs = null;
+    let rawHousePrice = null;
+    
+    let rrsPrices = null;
+    let hoPrices = null;
+    
+    let cuPrices = null;
+    let djPrices = null;
+    let ndPrices = null;
+    let oiPrices = null;
+    let spPrices = null;
 
     let sharedWidth = 0;
     const sharedMargin = {

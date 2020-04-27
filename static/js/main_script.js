@@ -1,8 +1,4 @@
 const prepare_data = async () => {
-  // draw_related_rates();
-  // draw_dataset();
-  // draw_tweets();
-
   // d3.select('#_spinner').style('display', 'flex');
   // d3.select('#order-selector').attr('disabled', true);
   // d3.select('#dataset-selector').attr('disabled', true);
@@ -28,8 +24,20 @@ const prepare_data = async () => {
     const tweetsRes = await fetch('/tweets');
     rawTweets = await tweetsRes.json();
 
-    const oilPriceRes = await fetch('/oil_prices');
-    rawOilPrices = JSON.parse(await oilPriceRes.json());
+    const rrsRes = await fetch('/related_rates');
+    rawRRs = JSON.parse(await rrsRes.json());
+
+    const housingRes = await fetch('/housings');
+    rawHousePrice = JSON.parse(await housingRes.json());
+
+    rrsPrices = _.filter(rawRRs, d => _.includes(sharedDates, d.Date));
+    hoPrices = _.filter(rawHousePrice, d => _.includes(sharedDates, d.date));
+
+    cuPrices = _.filter(_.map(rrsPrices, d => ({ date: d.Date, value: d.currency_value })), d => d.value !== 'NaN');
+    djPrices = _.filter(_.map(rrsPrices, d => ({ date: d.Date, value: d.dowjones_close })), d => d.value !== 'NaN');
+    ndPrices = _.filter(_.map(rrsPrices, d => ({ date: d.Date, value: d.nasdaq_close })), d => d.value !== 'NaN');
+    oiPrices = _.filter(_.map(rrsPrices, d => ({ date: d.Date, value: d.oil_price })), d => d.value !== 'NaN');
+    spPrices = _.filter(_.map(rrsPrices, d => ({ date: d.Date, value: d.sp_close })), d => d.value !== 'NaN');
 
     draw_tweets();
     draw_related_rates();

@@ -1,10 +1,15 @@
 let color = null;
-let tweetColorBy = 'favorites';
+let tweetColorBy = 'retweets';
+
+const colorSet = {
+  retweets: '#17bf63',
+  favorites: '#e0245e',
+  Sentiment: '#ff8bdf',
+}
 
 const draw_tweets = () => {
   let groupedTweets = _.values(rawTweets);
 
-  // d3.select('#tweets-svg').selectAll('*').remove();
   let svg = d3.select('#tweets-svg');
   
   let horiMargin = sharedMargin.left + sharedMargin.right;
@@ -16,7 +21,11 @@ const draw_tweets = () => {
   .append('g')
     .attr('transform', 'translate(' + sharedMargin.left + ',' + sharedMargin.top + ')');
 
-  color = d3.scaleLinear() .range([mainColor, mainColor]);
+  let max = _.chain(groupedTweets).map(tweets => _.map(tweets, tweetColorBy)).flatten().max().value();
+  let min = _.chain(groupedTweets).map(tweets => _.map(tweets, tweetColorBy)).flatten().min().value();
+  color = d3.scaleLinear()
+    .domain([min, max])
+    .range([secondaryColor, colorSet[tweetColorBy]]);
   
   let x = d3.scaleBand()
     .domain(sharedDates)
@@ -27,7 +36,6 @@ const draw_tweets = () => {
     .domain([0, _.max(_.map(groupedTweets, tweets => _.size(tweets)))])
     .range([height, 0]);
 
-  // let xAxis = g => g.call(d3.axisBottom(x));
   let yAxis = g => g.call(d3.axisLeft(y));
 
   let stackBars = svg.selectAll('g.tweet')
@@ -45,47 +53,12 @@ const draw_tweets = () => {
     .attr('y', (d, i) => y(i + 1) + 0.5)
     .attr('width', x.bandwidth())
     .attr('height', (d, i) => y(i) - y(i + 1) - 1)
-    .style('fill', '#00acee')
+    .style('fill', tweet => color(tweet[tweetColorBy]))
     .attr('id', (d, i) => `rect_${d.date}_${i}`)
     .on('mouseover', blockMouseoverHandler)
     .on('mouseout', blockMouseoutHandler)
     .on('click', blockOnClickHandler);
     
-  // svg.append('g')
-  //   .selectAll('g.tweet')
-  //   .data(groupedTweets)
-  //   .enter()
-  // .append('g')
-  //   .attr('class', 'bars')
-  //   // .attr('cursor', disableOnClick ? 'auto' : 'pointer')
-  //   // .attr('x', (d, i) => x(dates[i]))
-  //   // .attr('y', d => y(_.size(d)))
-  //   .attr('fill', '#00acee')
-  //   // .attr('width', x.bandwidth())
-  //   // .attr('height', d => height - y(_.size(d)))
-  //   .selectAll('g')
-  // .data(d => d)
-  //   .enter()
-  // .append('rect')
-  //   .attr('x', function(d) { return x(d.x); })
-  //   .attr('y', function(d) { return y(d.y0 + d.y); })
-  //   .attr('height', function(d) { return y(d.y0) - y(d.y0 + d.y); })
-  //   .attr('width', x.rangeBand());
-  //   // .on('mouseover', mouseoverBarHandler)
-  //   // .on('mouseout', mouseoutBarHandler)
-  //   // .on('click', disableOnClick ? null : barOnClickHandler);
-
-  // svg.append('g')
-  //   .attr('class', 'x-axis')
-  //   .attr('transform', 'translate(0,' + height + ')')
-  //   .call(xAxis)
-  // .selectAll('text')
-  //   .attr('y', 8)
-  //   .attr('x', -8)
-  //   .attr('dy', '.35em')
-  //   .attr('transform', 'rotate(-60)')
-  //   .attr('text-anchor', 'end');
-
   svg.append('g')
     .attr('class', 'y')
     .style('opacity','0')
@@ -159,25 +132,14 @@ function cleanTweetDetail(date) {
 }
 
 function handleTweetColorOnChange(value) {
-  const colorSet = {
-    retweets: '#17bf63',
-    favorites: '#e0245e',
-    Sentiment: '#ff8bdf',
-  }
   const groupedTweets = _.values(rawTweets);
   tweetColorBy = value;
   
-  if ('default' === tweetColorBy) {
-    color = d3.scaleLinear() .range([mainColor, mainColor]);
-    tweetColorBy = 'favorites';
-  }
-  else {
-    let max = _.chain(groupedTweets).map(tweets => _.map(tweets, tweetColorBy)).flatten().max().value();
-    let min = _.chain(groupedTweets).map(tweets => _.map(tweets, tweetColorBy)).flatten().min().value();
-    color = d3.scaleLinear()
-      .domain([min, max])
-      .range([secondaryColor, colorSet[tweetColorBy]]);
-  }
+  let max = _.chain(groupedTweets).map(tweets => _.map(tweets, tweetColorBy)).flatten().max().value();
+  let min = _.chain(groupedTweets).map(tweets => _.map(tweets, tweetColorBy)).flatten().min().value();
+  color = d3.scaleLinear()
+    .domain([min, max])
+    .range([secondaryColor, colorSet[tweetColorBy]]);
 
   _.each(groupedTweets, tweets => {
     _.each(tweets, (tweet, index) => {
