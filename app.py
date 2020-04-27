@@ -1,11 +1,13 @@
 from flask import Flask, render_template, send_file, jsonify, request
 import json
 import pandas as pd
+import numpy as np
 
 from tweets_handler import tweets_handler
 from stock_handler import stock_handler
 from mds_handler import get_euclidean, get_correlation
 from mds_data import mds_data
+from pca_handler import pca_handler
 
 app = Flask(__name__)
 
@@ -35,16 +37,19 @@ def get_housing():
   data = json.dumps(housing.to_dict(orient='records'), indent=2)
   return jsonify(data)
 
-@app.route('/mds_data/<mds_type>', methods = ['GET'])
-def getMdsData(mds_type):
-  global label, mds_euc_data, mds_cor_data
+@app.route('/analystic/<_type>', methods = ['GET'])
+def getMdsData(_type):
+  global label, mds_euc_data, mds_cor_data, pca_data
   
-  if mds_type == '' or mds_type == 'euclidean':
+  if _type == '' or _type == 'euclidean':
     res_data = mds_euc_data
-  elif mds_type == 'correlation':
+    res_data['label'] = label
+  elif _type == 'correlation':
     res_data = mds_cor_data
+    res_data['label'] = label
+  elif _type == 'pca':
+    res_data = pca_data
   
-  res_data['label'] = label
   res_data = res_data.to_dict('records')
   res_data = json.dumps(res_data, indent=2)
 
@@ -78,5 +83,8 @@ if __name__ == '__main__':
   mds_data, label = mds_data(tweets, sp, dowjones, nasdaq, currency, oil_price)
   mds_euc_data = get_euclidean(mds_data)
   mds_cor_data = get_correlation(mds_data)
+
+  pca_data = pd.DataFrame()  
+  pca_data['org'] = np.cumsum(pca_handler(mds_data).explained_variance_ratio_)
 
   app.run(debug=True, port=3002)
