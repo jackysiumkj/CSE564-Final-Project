@@ -214,12 +214,14 @@ function displayRatesForDetail(date) {
   const rrs = _.find(rrsPrices, { Date: date });
   const houseData = _.find(hoPrices, hoPrice => hoPrice.date.substring(0, 7) === date.substring(0, 7));
 
+  console.log(_.toNumber(rrs.currency_value));
+
   document.getElementById('detail-oi-price').innerHTML = !rrs ? '' : rrs.oil_price;
-  document.getElementById('detail-cu-price').innerHTML = !rrs ? '' : rrs.currency_value;
-  document.getElementById('detail-ho-price').innerHTML = !houseData ? '' : houseData.value;
-  document.getElementById('detail-sp-price').innerHTML = !rrs ? '' : rrs.sp_close;
-  document.getElementById('detail-dj-price').innerHTML = !rrs ? '' : rrs.dowjones_close;
-  document.getElementById('detail-nd-price').innerHTML = !rrs ? '' : rrs.nasdaq_close;
+  document.getElementById('detail-cu-price').innerHTML = !rrs ? '' : _.toNumber(rrs.currency_value).toFixed(2);
+  document.getElementById('detail-ho-price').innerHTML = !houseData ? '' : _.toNumber(houseData.value).toFixed(2);
+  document.getElementById('detail-sp-price').innerHTML = !rrs ? '' : _.toNumber(rrs.sp_close).toFixed(2);
+  document.getElementById('detail-dj-price').innerHTML = !rrs ? '' : _.toNumber(rrs.dowjones_close).toFixed(2);
+  document.getElementById('detail-nd-price').innerHTML = !rrs ? '' : _.toNumber(rrs.nasdaq_close).toFixed(2);
 }
 
 function handleRRLegendOnClick(value) {

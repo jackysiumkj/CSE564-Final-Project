@@ -68,8 +68,18 @@
       </div>
     </div>
     <div class="more-block">
-      <h5 class="subtitle">Chart of Each Dataset</h5>
+      <h5 class="subtitle">Analystic of Dataset</h5>
       <svg class="svg" id="dataset-svg"></svg>
+      <div id="analystic-select-wrap" class="input-group flex-row mb-4 mt-3">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="tweets-color-selector">Analystic Method</label>
+        </div>
+        <select class="custom-select" id="tweets-color-selector" onchange="handleAnaysticSelectorChange(this.value)">
+          <option selected value="mda_e">MDA with Euclidean</option>
+          <option value="mda_c">MDA with Correlation</option>
+          <option value="pca">PCA</option>
+        </select>
+      </div>
     </div>
     <div class="footer">
       <p><b>Author</b> Kai-Chieh Huang <span class="text-muted">112676186</span>, Hsien-Yi Liu <span class="text-muted">112675266</span></p>
@@ -121,6 +131,7 @@
     let rawTweets = null;
     let rawRRs = null;
     let rawHousePrice = null;
+    let rawMdsData = null;
     
     let rrsPrices = null;
     let hoPrices = null;
@@ -141,8 +152,8 @@
     let sharedDates = [];
 
   </script>
-  <script src="{{ url_for('static', filename='js/chart_for_dataset.js') }}"></script>
   <script src="{{ url_for('static', filename='js/related_rates_plot.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/analystic_plot.js') }}"></script>
   <script src="{{ url_for('static', filename='js/tweet_plot.js') }}"></script>
   <script src="{{ url_for('static', filename='js/main_script.js') }}"></script>
   <script src="{{ url_for('static', filename='js/lodash.min.js') }}"></script>

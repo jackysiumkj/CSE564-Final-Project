@@ -34,6 +34,5 @@ def tweets_handler():
   tweets["Sentiment"] = tweets.t_content.map(lambda x:sentiment_analysis(x) )
   tweets["Subjectivity"] = tweets.t_content.map(lambda x:subjectivity_analysis(x) )   
   tweets['date'] = pd.to_datetime(tweets['date']).dt.strftime('%Y-%m-%d')
-  tweets = tweets.groupby('date') 
 
   return tweets

@@ -30,6 +30,9 @@ const prepare_data = async () => {
     const housingRes = await fetch('/housings');
     rawHousePrice = JSON.parse(await housingRes.json());
 
+    const mdsRes = await fetch(`/mds_data/euclidean`);
+    rawMdsData = JSON.parse(await mdsRes.json());
+
     rrsPrices = _.filter(rawRRs, d => _.includes(sharedDates, d.Date));
     hoPrices = _.filter(rawHousePrice, d => _.includes(sharedDates, d.date));
 
@@ -41,6 +44,7 @@ const prepare_data = async () => {
 
     draw_tweets();
     draw_related_rates();
+    draw_analystic();
 
   
   //   d3.select('#_spinner').style('display', 'none');
