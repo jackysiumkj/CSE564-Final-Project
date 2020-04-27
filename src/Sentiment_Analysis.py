@@ -168,13 +168,12 @@ if __name__ == "__main__":
     DowJones.columns = ['Date','dowjones_close', 'normal_dowjones_close']
     NASDAQ.columns = ['Date','nasdaq_close', 'normal_nasdaq_close']
     housing.columns =  ['Date','housing_price']
-    merge_data = pd.merge(trump, DowJones, how='left', on='Date')
+
     NASDAQ.drop(columns=['normal_nasdaq_close'])
     DowJones.drop(columns=['normal_dowjones_close'])
     sp.drop(columns=['normal_sp_close'])
     trump.drop(columns=['Subjectivity','retweets','favorites'])
-    
-    
+    merge_data = pd.merge(trump, DowJones, how='left', on='Date')
     merge_data = pd.merge(merge_data, sp, how='left', on='Date')
     merge_data = pd.merge(merge_data, NASDAQ, how='left', on='Date')
     merge_data = pd.merge(merge_data,currency, how='left', on='Date')
