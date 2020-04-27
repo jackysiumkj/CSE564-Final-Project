@@ -67,6 +67,13 @@ def housing():
     
     return jsonify(data)
 
+@app.route('/merge', methods = ['POST', 'GET'])
+def merge_data():
+    global merge_data
+    data = json.dumps(merge_data.to_dict(orient='records'), indent=2)
+    
+    return data
+
 # Processing data with regular expression
 REPLACE_NO_SPACE = re.compile("[.;:!\'?,\"()\[\]]")
 REPLACE_WITH_SPACE = re.compile("(<br\s*/><br\s*/>)|(\-)|(\/)")
@@ -97,28 +104,8 @@ if __name__ == "__main__":
     nasdaq = pd.read_csv('nasdaq.csv')
     nasdaq = pd.DataFrame(nasdaq, columns = ['Date', 'Adj Close'])
     oil_price = pd.read_csv('oil_price.csv')
-    oil_price['date'] = pd.to_datetime(oil_price.date)
-    oil_price['date'] = oil_price['date'].astype(str)
-
-    currency = pd.read_csv('euro-dollar-exchange-rate-historical-chart.csv')
-    currency['date'] = pd.to_datetime(currency.date)
-    currency['date'] = currency['date'].astype(str) 
-
     housing = pd.read_csv('US_Housing_Price.csv')
-    housing['date'] = pd.to_datetime(housing.date)
-    housing['date'] = housing['date'].astype(str) 
-
-    # Processing Sentiment Score 
-    stop = stopwords.words('english')   
-    #trump =  trump.head(50)
-    trump["t_content"]  = trump['content'].str.replace('http\S+|www.\S+', '', case=False)
-    trump["t_content"] = trump["t_content"].map(lambda x:preprocess_reviews(x) )
-    trump["t_content"]  = trump["t_content"].apply(lambda x: ' '.join([item for item in x.split() if item not in stop]))
-    trump["Sentiment"] = trump.t_content.map(lambda x:sentiment_analysis(x) )
-    trump["Subjectivity"] = trump.t_content.map(lambda x:subjectivity_analysis(x) )   
-    trump['date']  =pd.to_datetime(trump['date']).dt.strftime('%Y-%m-%d')
-    trump = trump.groupby('date') 
-    
+    currency = pd.read_csv('euro-dollar-exchange-rate-historical-chart.csv')
     
     # Processing stock data
     x_sp = sp[['Adj Close']].values.astype(float)
@@ -137,5 +124,36 @@ if __name__ == "__main__":
     sp['Normalize_Adj_Close'] = pd.DataFrame(x_sp_scaled)
     dowjones['Normalize_Adj_Close'] = pd.DataFrame(x_dowjones_scaled)
     nasdaq['Normalize_Adj_Close'] = pd.DataFrame(x_nasdaq_scaled)
+    
+    # Merge data
+    sp.columns = ['Date','sp_close', 'normal_sp_close']
+    dowjones.columns = ['Date','dowjones_close', 'normal_dowjones_close']
+    nasdaq.columns = ['Date','nasdaq_close', 'normal_nasdaq_close']
+    housing.columns =  ['Date','housing_price']
+    merge_data = pd.merge(sp, dowjones, how='outer', on='Date')
+    merge_data = pd.merge(merge_data, nasdaq, how='outer', on='Date')
+    merge_data = pd.merge(merge_data,currency, how='left', on='Date')
+    merge_data = pd.merge(merge_data,oil_price, how='left', on='Date')
+    # Missing data
+    merge_data.fillna(0)
+   
+    # Uniform Date format
+    oil_price['Date'] = pd.to_datetime(oil_price.Date)
+    oil_price['Date'] = oil_price['Date'].astype(str)
+    currency['Date'] = pd.to_datetime(currency.Date)
+    currency['Date'] = currency['Date'].astype(str) 
+    housing['Date'] = pd.to_datetime(housing.Date)
+    housing['Date'] = housing['Date'].astype(str) 
 
+    # Processing Sentiment Score 
+    stop = stopwords.words('english')   
+    trump =  trump.head(50)
+    trump["t_content"]  = trump['content'].str.replace('http\S+|www.\S+', '', case=False)
+    trump["t_content"] = trump["t_content"].map(lambda x:preprocess_reviews(x) )
+    trump["t_content"]  = trump["t_content"].apply(lambda x: ' '.join([item for item in x.split() if item not in stop]))
+    trump["Sentiment"] = trump.t_content.map(lambda x:sentiment_analysis(x) )
+    trump["Subjectivity"] = trump.t_content.map(lambda x:subjectivity_analysis(x) )   
+    trump['date']  =pd.to_datetime(trump['date']).dt.strftime('%Y-%m-%d')
+    trump = trump.groupby('date') 
+    
     app.run(debug=True)

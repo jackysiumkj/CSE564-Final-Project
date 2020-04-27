@@ -1,6 +1,23 @@
 # CSE564-Final-Project
 
 ## API usage
+#### Merge data
+- Route: /merge
+- Type: JSON
+- JSON example:
+```
+[{
+"Date": "4/14/20",
+"sp_close": 2846.060059,
+"normal_sp_close": 0.6531370704396087,
+"dowjones_close": 23949.75977,
+"normal_dowjones_close": 0.5967487382514298,
+"nasdaq_close": 8515.740234,
+"normal_nasdaq_close": 0.7655207625877404,
+"currency_value": 1.0984,
+"oil_price": 21.74
+}]
+```
 #### tweets with sentiment()
 - Route: /
 - Type: JSON

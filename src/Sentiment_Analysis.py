@@ -26,6 +26,8 @@ NASDAQ = pd.read_csv('NASDAQ.csv')
 NASDAQ = pd.DataFrame(NASDAQ, columns = ['Date', 'Adj Close'])
 housing = pd.read_csv('US_Housing_Price.csv')
 housing = pd.DataFrame(housing, columns = ['date', 'housing_price'])
+currency = pd.read_csv('euro-dollar-exchange-rate-historical-chart.csv')
+oil_price = pd.read_csv('oil_price.csv')
 
 # Processing trump with regular expression
 REPLACE_NO_SPACE = re.compile("[.;:!\'?,\"()\[\]]")
@@ -49,28 +51,28 @@ def subjectivity_analysis(text):
 
 if __name__ == "__main__":
     
-    #x = sp.values #returns a numpy array
-    #x_sp = sp[['Adj Close']].values.astype(float)
-    #x_DowJones = DowJones[['Adj Close']].values.astype(float)
-    #x_NASDAQ = NASDAQ[['Adj Close']].values.astype(float)
+    x = sp.values #returns a numpy array
+    x_sp = sp[['Adj Close']].values.astype(float)
+    x_DowJones = DowJones[['Adj Close']].values.astype(float)
+    x_NASDAQ = NASDAQ[['Adj Close']].values.astype(float)
     # Create a minimum and maximum processor object
-    #min_max_scaler = preprocessing.MinMaxScaler()
+    min_max_scaler = preprocessing.MinMaxScaler()
 
     # Create an object to transform the trump to fit minmax processor
-    #x_sp_scaled = min_max_scaler.fit_transform(x_sp)
-    #x_DowJones_scaled = min_max_scaler.fit_transform(x_DowJones)
-    #x_NASDAQ_scaled = min_max_scaler.fit_transform(x_NASDAQ)
+    x_sp_scaled = min_max_scaler.fit_transform(x_sp)
+    x_DowJones_scaled = min_max_scaler.fit_transform(x_DowJones)
+    x_NASDAQ_scaled = min_max_scaler.fit_transform(x_NASDAQ)
 
 
     # Run the normalizer on the DataFrame
-    #sp['Normalize_Adj_Close'] = pd.DataFrame(x_sp_scaled)
-    #DowJones['Normalize_Adj_Close'] = pd.DataFrame(x_DowJones_scaled)
-    #NASDAQ['Normalize_Adj_Close'] = pd.DataFrame(x_NASDAQ_scaled)
+    sp['Normalize_Adj_Close'] = pd.DataFrame(x_sp_scaled)
+    DowJones['Normalize_Adj_Close'] = pd.DataFrame(x_DowJones_scaled)
+    NASDAQ['Normalize_Adj_Close'] = pd.DataFrame(x_NASDAQ_scaled)
     
     
     stop = stopwords.words('english') 
-    #trump =  trump.head(50)
-    #trump['date'] = pd.to_datetime(trump['date']).dt.normalize()
+    trump =  trump.head(50)
+    trump['date'] = pd.to_datetime(trump['date']).dt.normalize()
 
 
     trump["t_content"]  = trump['content'].str.replace('http\S+|www.\S+', '', case=False)
@@ -81,7 +83,7 @@ if __name__ == "__main__":
 
 
     trump['date'] = pd.to_datetime(trump['date']).dt.strftime('%Y-%m-%d')
-
+    
     #trump['date'] = pd.to_datetime(trump['date']).dt.date
     trump = trump.groupby('date') 
     trump = trump.apply(lambda x: x.to_json(orient='records'))
@@ -95,4 +97,13 @@ if __name__ == "__main__":
     #print(trump["date"])
     #plt.plot(NASDAQ['Date'], NASDAQ['Normalize_Adj_Close'])
     #plt.show()
+    sp.columns = ['Date','s&p_close', 'normal_s&p_close']
+    DowJones.columns = ['Date','dowjones_close', 'normal_dowjones_close']
+    NASDAQ.columns = ['Date','nasdaq_close', 'normal_nasdaq_close']
 
+    housing.columns =  ['Date','housing_price']
+    merge_data = pd.merge(sp, DowJones, how='outer', on='Date')
+    merge_data = pd.merge(merge_data, NASDAQ, how='outer', on='Date')
+    merge_data = pd.merge(merge_data,currency, how='left', on='Date')
+    merge_data = pd.merge(merge_data,oil_price, how='left', on='Date')
+    print(merge_data.fillna(0))
