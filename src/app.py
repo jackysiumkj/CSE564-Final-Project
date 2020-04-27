@@ -130,7 +130,13 @@ if __name__ == "__main__":
     trump["t_content"]  = trump["t_content"].apply(lambda x: ' '.join([item for item in x.split() if item not in stop]))
     trump["Sentiment"] = trump.t_content.map(lambda x:sentiment_analysis(x) )
     trump["Subjectivity"] = trump.t_content.map(lambda x:subjectivity_analysis(x) )  
-
+    # Uniform Date format
+    dowjones['Date'] = pd.to_datetime(dowjones['Date']).dt.strftime('%Y-%m-%d')
+    nasdaq['Date'] = pd.to_datetime(nasdaq['Date']).dt.strftime('%Y-%m-%d')
+    sp['Date'] = pd.to_datetime(sp['Date']).dt.strftime('%Y-%m-%d')
+    currency['Date'] = pd.to_datetime(currency['Date']).dt.strftime('%Y-%m-%d')
+    oil_price['Date'] = pd.to_datetime(oil_price['Date']).dt.strftime('%Y-%m-%d')
+    trump['date'] = pd.to_datetime(trump['date']).dt.strftime('%Y-%m-%d')
     # Merge data
     sp.columns = ['Date','sp_close']
     dowjones.columns = ['Date','dowjones_close']
@@ -146,16 +152,7 @@ if __name__ == "__main__":
     # Preprocessing data for mds/corr
     mds_data,label = mds_data(trump,sp,dowjones,nasdaq,currency,oil_price)
     
-    # Uniform Date format
-    oil_price['Date'] = pd.to_datetime(oil_price.Date)
-    oil_price['Date'] = oil_price['Date'].astype(str)
-    currency['Date'] = pd.to_datetime(currency.Date)
-    currency['Date'] = currency['Date'].astype(str) 
-    housing['Date'] = pd.to_datetime(housing.Date)
-    housing['Date'] = housing['Date'].astype(str) 
 
- 
-    trump['date']  =pd.to_datetime(trump['date']).dt.strftime('%Y-%m-%d')
     trump = trump.groupby('date') 
     
     app.run(debug=True)
