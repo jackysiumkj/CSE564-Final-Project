@@ -4,109 +4,165 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>CSE564 2020 Spring Assignment 2</title>
+  <title>Visualization@SBU Final Project</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
 <body>
-  <h1 id="title">SBU, Spring 2020, CSE 564 Assignment 2</h1>
-  <h4 id="subtitle">Author: Kai-Chieh Huang, SBU ID #112676186</h4>
-  <hr id="divider" />
-  <div id="menu-div">
-    <div id="selector-div-non-his">
-      <div class="input-group mr-3" style="flex: 1; width: unset;">
-        <div class="input-group-prepend">
-          <label class="input-group-text" for="order-selector">Display</label>
-        </div>
-        <select class="custom-select" id="order-selector" onchange="handleDataOnChange(this.value)">
-          <option selected value="pca">PCA</option>
-          <option value="top_two_pca">Top Two PC</option>
-          <option value="mds">MDS</option>
-          <option value="three_highest_pca">Three Highest PC</option>
-        </select>
+  <div class="root left-root shadow">
+    <div class="left-top-block">
+      <h5 class="subtitle">Tweets from President Trump</h5>
+      <div class="svg-wrap-div" id="tweets-wrap">
+        <svg class="svg" id="tweets-svg"></svg>
       </div>
-      <div id="pca_menu">
-        <button
-          id="org_btn"
-          type="button"
-          class="btn btn-primary mr-3"
-          onclick="handlePCADataOnClick('org')"
-        >
-          Original
-        </button>
-        <button
-          id="rnd_btn"
-          type="button"
-          class="btn btn-outline-primary mr-3"
-          onclick="handlePCADataOnClick('rnd')"
-        >
-          Random
-        </button>
-        <button
-          id="str_btn"
-          type="button"
-          class="btn btn-outline-primary"
-          onclick="handlePCADataOnClick('str')"
-        >
-          Stratify
-        </button>
-      </div>
-      <div id="dataset_select_box" class="input-group mr-3" style="flex: 1; width: unset; display: none;">
-        <div class="input-group-prepend">
-          <label class="input-group-text" for="dataset-selector">Dataset</label>
-        </div>
-        <select class="custom-select" id="dataset-selector" onchange="handleDataSetOnChange(this.value)">
-          <option value="org">Original</option>
-          <option value="rnd">Random</option>
-          <option selected value="str">Stratify</option>
-        </select>
-      </div>
-      <div id="mds_menu" style="display: none;">
-        <button
-          id="euclidean_btn"
-          type="button"
-          class="btn btn-primary mr-3"
-          onclick="handleMDSDataOnClick('euclidean')"
-        >
-          Euclidean
-        </button>
-        <button
-          id="correlation_btn"
-          type="button"
-          class="btn btn-outline-primary"
-          onclick="handleMDSDataOnClick('correlation')"
-        >
-          Correlation
-        </button>
+    </div>
+    <div class="left-bottom-block">
+      <h5 class="subtitle">Rates Related to Tweets</h5>
+      <div class="svg-wrap-div" id="related-rates-wrap">
+        <svg class="svg" id="related-rates-svg"></svg>
       </div>
     </div>
   </div>
-  <hr id="divider" />
-  <div id="_spinner" class="spinner-grow" role="status" style="display: none;"></div>
-  <svg id="chart" ></svg>
+  <div class="root right-root shadow">
+    <div class="tweet-detail-block">
+      <h5 class="subtitle">Detail of Tweet</h5>
+      <div>
+        <div class="flex-row justify-content-end mt-2">
+          <h6 class="text-muted" ></h6>
+        </div>
+        <div class="detail-wrap shadow">
+          <div class="flex-row mb-1">
+            <p><strong>Donald J. Trump</strong> </p>
+            <svg viewBox="0 0 24 24" id="verified-svg"><g><path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.818-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.437 2.25c-.415-.165-.866-.25-1.336-.25-2.11 0-3.818 1.79-3.818 4 0 .494.083.964.237 1.4-1.272.65-2.147 2.018-2.147 3.6 0 1.495.782 2.798 1.942 3.486-.02.17-.032.34-.032.514 0 2.21 1.708 4 3.818 4 .47 0 .92-.086 1.335-.25.62 1.334 1.926 2.25 3.437 2.25 1.512 0 2.818-.916 3.437-2.25.415.163.865.248 1.336.248 2.11 0 3.818-1.79 3.818-4 0-.174-.012-.344-.033-.513 1.158-.687 1.943-1.99 1.943-3.484zm-6.616-3.334l-4.334 6.5c-.145.217-.382.334-.625.334-.143 0-.288-.04-.416-.126l-.115-.094-2.415-2.415c-.293-.293-.293-.768 0-1.06s.768-.294 1.06 0l1.77 1.767 3.825-5.74c.23-.345.696-.436 1.04-.207.346.23.44.696.21 1.04z"></path></g></svg>
+            <p> @realDonaldTrump · </p>
+            <p id="tweet-date"></p>
+          </div>
+          <p id="tweet-content">Click a Tweet Record to See Detail</p>
+          <div class="flex-row align-items-center">
+            <svg viewBox="0 0 24 24" class="tweet-svg" id="retweet-svg"><g><path d="M23.77 15.67c-.292-.293-.767-.293-1.06 0l-2.22 2.22V7.65c0-2.068-1.683-3.75-3.75-3.75h-5.85c-.414 0-.75.336-.75.75s.336.75.75.75h5.85c1.24 0 2.25 1.01 2.25 2.25v10.24l-2.22-2.22c-.293-.293-.768-.293-1.06 0s-.294.768 0 1.06l3.5 3.5c.145.147.337.22.53.22s.383-.072.53-.22l3.5-3.5c.294-.292.294-.767 0-1.06zm-10.66 3.28H7.26c-1.24 0-2.25-1.01-2.25-2.25V6.46l2.22 2.22c.148.147.34.22.532.22s.384-.073.53-.22c.293-.293.293-.768 0-1.06l-3.5-3.5c-.293-.294-.768-.294-1.06 0l-3.5 3.5c-.294.292-.294.767 0 1.06s.767.293 1.06 0l2.22-2.22V16.7c0 2.068 1.683 3.75 3.75 3.75h5.85c.414 0 .75-.336.75-.75s-.337-.75-.75-.75z"></path></g></svg>
+            <p id="tweet-retweets"></p>
+            <svg viewBox="0 0 24 24" class="tweet-svg ml-4" id="like-svg"><g><path d="M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12z"></path></g></svg>
+            <p id="tweet-favorites"></p>
+            <a id="tweet-link" class="ml-4" href="#">Tweet Link</a>
+          </div>
+        </div>
+        <div class="detail-wrap shadow mt-4 mb-3">
+          <div class="flex-row justify-content-between">
+            <div class="flex-row">
+              <p><strong>Sentiment Score</strong></p>
+              <p id="tweet-sentiment" class="ml-2"></p>
+            </div>
+            <div class="flex-row">
+              <p><strong>Subjectivity</strong></p>
+              <p id="tweet-subjectivity" class="ml-2"></p>
+            </div>
+          </div>
+          <hr style="width: calc(100% + 24px); margin: 12px -12px;"/>
+          <p><strong>Oil Price</strong><span class="ml-2" id="detail-oi-price"></span> USD/bbl (1 bbl = 120L)</p>
+          <p><strong>Currency</strong><span class="ml-2" id="detail-cu-price"></span> EUR to USD</p>
+          <p><strong>Avg. House Price</strong><span class="ml-2" id="detail-ho-price"></span> USD</p>
+          <p><strong>Stock</strong></p>
+          <p><strong class="ml-3">S&P 500 Close Price</strong><span class="ml-2" id="detail-sp-price"></span> USD</p>
+          <p><strong class="ml-3">Dow Jones Close Price</strong><span class="ml-2" id="detail-dj-price"></span> USD</p>
+          <p><strong class="ml-3">NASDAQ Close Price</strong><span class="ml-2" id="detail-nd-price"></span> USD</p>
+        </div>
+      </div>
+    </div>
+    <div class="more-block">
+      <h5 class="subtitle">Analystic of Dataset</h5>
+      <svg class="svg" id="dataset-svg"></svg>
+      <div id="analystic-select-wrap" class="input-group flex-row mb-4 mt-3">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="tweets-color-selector">Analystic Method</label>
+        </div>
+        <select class="custom-select" id="tweets-color-selector" onchange="handleAnaysticSelectorChange(this.value)">
+          <option selected value="mda_e">MDA with Euclidean</option>
+          <option value="mda_c">MDA with Correlation</option>
+          <option value="pca">PCA</option>
+        </select>
+      </div>
+    </div>
+    <div class="footer">
+      <p><b>Author</b> Kai-Chieh Huang <span class="text-muted">112676186</span>, Hsien-Yi Liu <span class="text-muted">112675266</span></p>
+      <p>Copyright © 2020</p>
+    </div>
+  </div>
+  <div id="tooltip-div" class="shadow" style="opacity: 0;">
+    <p id="tooltip-content"></p>
+  </div>
+  <div id="tweets-color-group" class="input-group flex-row">
+    <div class="input-group-prepend">
+      <label class="input-group-text" for="tweets-color-selector">Colored by</label>
+    </div>
+    <select class="custom-select" id="tweets-color-selector" onchange="handleTweetColorOnChange(this.value)">
+      <option selected value="retweets">Retweets</option>
+      <option value="favorites">Likes</option>
+      <option value="Sentiment">Sentiment Score</option>
+    </select>
+  </div>
+  <div id="rr-lagend-group" class="flex-row">
+    <p id="oi_legend" onclick="handleRRLegendOnClick('oi')">
+      <svg class="rr-svg"><rect width="13" height="13" style="fill: #17bf63;"/></svg>Oil Price
+    </p>
+    <p id="cu_legend" onclick="handleRRLegendOnClick('cu')">
+      <svg class="rr-svg"><rect width="13" height="13" style="fill: #e0245e;"/></svg>Currency
+    </p>
+    <p id="ho_legend" onclick="handleRRLegendOnClick('ho')">
+      <svg class="rr-svg"><rect width="13" height="13" style="fill: #2378f5;"/></svg>House Price
+    </p>
+    <p id="sp_legend" onclick="handleRRLegendOnClick('sp')">
+      <svg class="rr-svg"><rect width="13" height="13" style="fill: #e2950c;"/></svg>S&P 500
+    </p>
+    <p id="dj_legend" onclick="handleRRLegendOnClick('dj')">
+      <svg class="rr-svg"><rect width="13" height="13" style="fill: #a79707;"/></svg>Dow Jones
+    </p>
+    <p id="nd_legend" onclick="handleRRLegendOnClick('nd')">
+      <svg class="rr-svg"><rect width="13" height="13" style="fill: #decf00;"/></svg>NASDAQ
+    </p>
+    <p id="ssr_legend" onclick="handleRRLegendOnClick('ssr')">
+      <svg class="rr-svg"><rect width="13" height="13" style="fill: #ff8bdf;"/></svg>Average Sentiment Score
+    </p>
+  </div>
+  
+  </select>
+  <!-- <div id="_spinner" class="spinner-grow" role="status" style="display: none;"></div> -->
+  <!-- <svg id="chart" ></svg> -->
   <script>
     // First load only
     const host = 'http://localhost:3002';
-    let data = [];
-    const labels = [
-      'Bronx',
-      'Brooklyn',
-      'Manhattan',
-      'Queens',
-      'Staten Island',
-    ];
+    const mainColor = '#00acee';
+    const secondaryColor = '#ececec';
+    let rawTweets = null;
+    let rawRRs = null;
+    let rawHousePrice = null;
+    let rawAnaData = null;
     
+    let rrsPrices = null;
+    let hoPrices = null;
+    
+    let cuPrices = null;
+    let djPrices = null;
+    let ndPrices = null;
+    let oiPrices = null;
+    let spPrices = null;
+    let tweetObjs = null;
+
+    let sharedWidth = 0;
+    const sharedMargin = {
+      top: 4, 
+      right: 32, 
+      bottom: 4, 
+      left: 32
+    };
+    let sharedDates = [];
+
   </script>
-  <!-- <script src="./js/lodash.min.js"></script>
-  <script src="./js/moment.min.js"></script>
-  <script src="./js/d3_bar_chart_script.js"></script>
-  <script src="./js/d3_pie_chart_script.js"></script>
-  <script src="./js/d3_histogram_script.js"></script> -->
-  <script src="{{ url_for('static', filename='js/d3_pca_scatterplot.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/d3_ttpca_scatterplot.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/d3_mds_scatterplot.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/d3_t3_pca_scatterplot.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/menu_script.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/related_rates_plot.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/analystic_plot.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/tweet_plot.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/main_script.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/lodash.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/d3.min.js') }}" onload="prepare_data()"></script>
 </bod>
 </html>
