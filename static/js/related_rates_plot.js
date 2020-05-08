@@ -23,7 +23,7 @@ const relatedRatesLabels = {
   nd: 'NASDAQ',
   sp: 'S&P 500',
   ho: 'House Price',
-  ssr: 'Sentiment Score Range',
+  ssr: 'Average Sentiment Score',
 }
 
 let updateRRSPlot = null;
@@ -50,72 +50,33 @@ const draw_related_rates = () => {
   let minMaxOi = [_.min(_.map(oiPrices, 'value')), _.max(_.map(oiPrices, 'value'))];
   let minMaxND = [_.min(_.map(ndPrices, 'value')), _.max(_.map(ndPrices, 'value'))];
   let minMaxSP = [_.min(_.map(spPrices, 'value')), _.max(_.map(spPrices, 'value'))];
-  let cuY = d3.scaleLinear().domain(minMaxCu).range([height, 48]);
-  let oiY = d3.scaleLinear().domain(minMaxOi).range([height, 48]);
-  let djY = d3.scaleLinear().domain(minMaxDJ).range([height, 48]);
-  let ndY = d3.scaleLinear().domain(minMaxND).range([height, 48]);
-  let spY = d3.scaleLinear().domain(minMaxSP).range([height, 48]);
-  
   let minMaxHo = [_.min(_.map(hoPrices, 'value')), _.max(_.map(hoPrices, 'value'))];
-  let hoY = d3.scaleLinear().domain(minMaxHo).range([height, 48]);
+  let minMaxSSR = [_.min(_.map(tweetObjs, 'value')), _.max(_.map(tweetObjs, 'value'))];
 
-  let cuLine = d3.line()
+  let getY = minMax => d3.scaleLinear().domain(minMax).range([height, 48]);
+  let getPath = y => d3.line()
     .x(d => x(d.date) + x.bandwidth() / 2)
-    .y(d => cuY(d.value))
-    .curve(d3.curveMonotoneX);
-  let oiLine = d3.line()
-    .x(d => x(d.date) + x.bandwidth() / 2)
-    .y(d => oiY(d.value))
-    .curve(d3.curveMonotoneX);
-  let djLine = d3.line()
-    .x(d => x(d.date) + x.bandwidth() / 2)
-    .y(d => djY(d.value))
-    .curve(d3.curveMonotoneX);
-  let ndLine = d3.line()
-    .x(d => x(d.date) + x.bandwidth() / 2)
-    .y(d => ndY(d.value))
-    .curve(d3.curveMonotoneX);
-  let spLine = d3.line()
-    .x(d => x(d.date) + x.bandwidth() / 2)
-    .y(d => spY(d.value))
-    .curve(d3.curveMonotoneX);
-  let hoLine = d3.line()
-    .x(d => x(d.date) + x.bandwidth() / 2)
-    .y(d => hoY(d.value))
-    .curve(d3.curveMonotoneX);
+    .y(d => y(d.value))
+    .curve(d3.curveMonotoneX)
 
   let dayXAxis = g => g.call(d3.axisTop(x).tickFormat((d, i) => (i === 0 || /\d{4}-\d{2}-01/.test(d)) ? '|' : d.substring(8)).tickSize(0));
   let dateXAxis = g => g.call(d3.axisTop(x).tickFormat((d, i) => (i === 0 || /\d{4}-\d{2}-01/.test(d)) ? d : '' ).tickSize(0));
 
   let rrsChartObjects = {
-    cu: { dataset: cuPrices, path: cuLine, id: 'cu', y: cuY },
-    oi: { dataset: oiPrices, path: oiLine, id: 'oi', y: oiY },
-    dj: { dataset: djPrices, path: djLine, id: 'dj', y: djY },
-    nd: { dataset: ndPrices, path: ndLine, id: 'nd', y: ndY },
-    sp: { dataset: spPrices, path: spLine, id: 'sp', y: spY },
-    ho: { dataset: hoPrices, path: hoLine, id: 'ho', y: hoY },
+    cu: { dataset: cuPrices, id: 'cu', y: getY(minMaxCu) },
+    oi: { dataset: oiPrices, id: 'oi', y: getY(minMaxOi) },
+    dj: { dataset: djPrices, id: 'dj', y: getY(minMaxDJ) },
+    nd: { dataset: ndPrices, id: 'nd', y: getY(minMaxND) },
+    sp: { dataset: spPrices, id: 'sp', y: getY(minMaxSP) },
+    ho: { dataset: hoPrices, id: 'ho', y: getY(minMaxHo) },
+    ssr: { dataset: tweetObjs, id: 'ssr', y: getY(minMaxSSR) },
   }
-  let ssrY = d3.scaleLinear()
-    .domain([_.min(_.map(tweetObjs, 'min')), _.max(_.map(tweetObjs, 'max'))])
-    .range([height, 48]);
 
-  svg.append('path')
-    .datum(tweetObjs)
-      .attr('class', `line ssr_path`)
-      .attr('fill', d3.rgb(relatedRatesColorSet.ssr).copy({opacity: 0.1}))
-      .attr('stroke', relatedRatesColorSet.ssr)
-      .attr('stroke-width', 1.5)
-      .attr('d', d3.area()
-        .x(d => x(d.date) + x.bandwidth() / 2)
-        .y0(d => ssrY(d.min))
-        .y1(d => ssrY(d.max))
-      );
-  
   _.each(rrsChartObjects, obj => {
     svg.append('path')
     .data([obj.dataset])
       .attr('class', `line ${obj.id}_path`)
-      .attr('d', obj.path)
+      .attr('d', getPath(obj.y))
       .attr('fill', 'none')
       .attr('stroke', relatedRatesColorSet[obj.id]);
 
@@ -194,19 +155,15 @@ const draw_related_rates = () => {
   }
 
   updateRRSPlot = function (id, isEnabled){
-    // if (id === 'ssr') {
-    //   return console.log('object');
-    // }
-
     if (!isEnabled) {
       d3.selectAll(`.${id}_dot`).transition().duration(200).style('opacity', 0).remove();
       d3.selectAll(`.${id}_path`).transition().duration(200).style('opacity', 0).remove();
-    } else if (id !== 'ssr') {
+    } else {
       let obj = rrsChartObjects[id];
       svg.append('path')
       .data([obj.dataset])
         .attr('class', `line ${obj.id}_path`)
-        .attr('d', obj.path)
+        .attr('d', getPath(obj.y))
         .attr('fill', 'none')
         .attr('stroke', relatedRatesColorSet[obj.id])
         .style('opacity', 0);
@@ -226,22 +183,6 @@ const draw_related_rates = () => {
         .on('mouseout', dotMouseoutHandler(obj.id))
         .on('click', dotOnClickHandler(obj.id));
 
-      d3.selectAll(`.${id}_dot`).transition().duration(200).style('opacity', 1);
-      d3.selectAll(`.${id}_path`).transition().duration(200).style('opacity', 1);
-    } else {
-      svg.append('path')
-      .datum(tweetObjs)
-        .attr('class', `line ssr_path`)
-        .attr('fill', d3.rgb(relatedRatesColorSet.ssr).copy({opacity: 0.1}))
-        .attr('stroke', relatedRatesColorSet.ssr)
-        .attr('stroke-width', 1.5)
-        .attr('d', d3.area()
-          .x(d => x(d.date) + x.bandwidth() / 2)
-          .y0(d => ssrY(d.min))
-          .y1(d => ssrY(d.max))
-        )
-        .style('opacity', 0);
-  
       d3.selectAll(`.${id}_dot`).transition().duration(200).style('opacity', 1);
       d3.selectAll(`.${id}_path`).transition().duration(200).style('opacity', 1);
     }

@@ -44,8 +44,7 @@ const prepare_data = async () => {
 
     tweetObjs = _.map(rawTweets, (tweets, date) => ({
       date,
-      max: _.chain(tweets).map('Sentiment').max().value(),
-      min: _.chain(tweets).map('Sentiment').min().value(),
+      value: _.sumBy(tweets, 'Sentiment') / _.size(tweets),
     }));
 
     draw_tweets();
