@@ -1,10 +1,11 @@
 const relatedRatesColorSet = {
   cu: '#e0245e',
   oi: '#17bf63',
-  dj: '#7841ff',
-  nd: '#fc74ff',
+  dj: '#a79707',
+  nd: '#decf00',
   sp: '#e2950c',
   ho: '#2378f5',
+  ssr: '#ff8bdf',
 }
 const relatedRatesEnable = {
   cu: true,
@@ -13,6 +14,7 @@ const relatedRatesEnable = {
   nd: true,
   sp: true,
   ho: true,
+  ssr: true,
 }
 const relatedRatesLabels = {
   cu: 'Currency',
@@ -21,6 +23,7 @@ const relatedRatesLabels = {
   nd: 'NASDAQ',
   sp: 'S&P 500',
   ho: 'House Price',
+  ssr: 'Sentiment Score Range',
 }
 
 let updateRRSPlot = null;
@@ -92,7 +95,22 @@ const draw_related_rates = () => {
     sp: { dataset: spPrices, path: spLine, id: 'sp', y: spY },
     ho: { dataset: hoPrices, path: hoLine, id: 'ho', y: hoY },
   }
+  let ssrY = d3.scaleLinear()
+    .domain([_.min(_.map(tweetObjs, 'min')), _.max(_.map(tweetObjs, 'max'))])
+    .range([height, 48]);
 
+  svg.append('path')
+    .datum(tweetObjs)
+      .attr('class', `line ssr_path`)
+      .attr('fill', d3.rgb(relatedRatesColorSet.ssr).copy({opacity: 0.1}))
+      .attr('stroke', relatedRatesColorSet.ssr)
+      .attr('stroke-width', 1.5)
+      .attr('d', d3.area()
+        .x(d => x(d.date) + x.bandwidth() / 2)
+        .y0(d => ssrY(d.min))
+        .y1(d => ssrY(d.max))
+      );
+  
   _.each(rrsChartObjects, obj => {
     svg.append('path')
     .data([obj.dataset])
@@ -115,7 +133,7 @@ const draw_related_rates = () => {
       .on('mouseout', dotMouseoutHandler(obj.id))
       .on('click', dotOnClickHandler(obj.id));
   });
-
+  
   svg.append('g')
     .call(dayXAxis)
     .call(g => g.select('.domain').remove())
@@ -176,10 +194,14 @@ const draw_related_rates = () => {
   }
 
   updateRRSPlot = function (id, isEnabled){
+    // if (id === 'ssr') {
+    //   return console.log('object');
+    // }
+
     if (!isEnabled) {
       d3.selectAll(`.${id}_dot`).transition().duration(200).style('opacity', 0).remove();
       d3.selectAll(`.${id}_path`).transition().duration(200).style('opacity', 0).remove();
-    } else {
+    } else if (id !== 'ssr') {
       let obj = rrsChartObjects[id];
       svg.append('path')
       .data([obj.dataset])
@@ -204,6 +226,22 @@ const draw_related_rates = () => {
         .on('mouseout', dotMouseoutHandler(obj.id))
         .on('click', dotOnClickHandler(obj.id));
 
+      d3.selectAll(`.${id}_dot`).transition().duration(200).style('opacity', 1);
+      d3.selectAll(`.${id}_path`).transition().duration(200).style('opacity', 1);
+    } else {
+      svg.append('path')
+      .datum(tweetObjs)
+        .attr('class', `line ssr_path`)
+        .attr('fill', d3.rgb(relatedRatesColorSet.ssr).copy({opacity: 0.1}))
+        .attr('stroke', relatedRatesColorSet.ssr)
+        .attr('stroke-width', 1.5)
+        .attr('d', d3.area()
+          .x(d => x(d.date) + x.bandwidth() / 2)
+          .y0(d => ssrY(d.min))
+          .y1(d => ssrY(d.max))
+        )
+        .style('opacity', 0);
+  
       d3.selectAll(`.${id}_dot`).transition().duration(200).style('opacity', 1);
       d3.selectAll(`.${id}_path`).transition().duration(200).style('opacity', 1);
     }

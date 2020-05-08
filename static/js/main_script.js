@@ -42,6 +42,12 @@ const prepare_data = async () => {
     oiPrices = _.filter(_.map(rrsPrices, d => ({ date: d.Date, value: d.oil_price })), d => d.value !== 'NaN');
     spPrices = _.filter(_.map(rrsPrices, d => ({ date: d.Date, value: d.sp_close })), d => d.value !== 'NaN');
 
+    tweetObjs = _.map(rawTweets, (tweets, date) => ({
+      date,
+      max: _.chain(tweets).map('Sentiment').max().value(),
+      min: _.chain(tweets).map('Sentiment').min().value(),
+    }));
+
     draw_tweets();
     draw_related_rates();
     draw_mds();

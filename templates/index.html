@@ -114,10 +114,13 @@
       <svg class="rr-svg"><rect width="13" height="13" style="fill: #e2950c;"/></svg>S&P 500
     </p>
     <p id="dj_legend" onclick="handleRRLegendOnClick('dj')">
-      <svg class="rr-svg"><rect width="13" height="13" style="fill: #7841ff;"/></svg>Dow Jones
+      <svg class="rr-svg"><rect width="13" height="13" style="fill: #a79707;"/></svg>Dow Jones
     </p>
     <p id="nd_legend" onclick="handleRRLegendOnClick('nd')">
-      <svg class="rr-svg"><rect width="13" height="13" style="fill: #fc74ff;"/></svg>NASDAQ
+      <svg class="rr-svg"><rect width="13" height="13" style="fill: #decf00;"/></svg>NASDAQ
+    </p>
+    <p id="ssr_legend" onclick="handleRRLegendOnClick('ssr')">
+      <svg class="rr-svg"><rect width="13" height="13" style="fill: #ff8bdf;"/></svg>Sentiment Score Range
     </p>
   </div>
   
@@ -142,6 +145,7 @@
     let ndPrices = null;
     let oiPrices = null;
     let spPrices = null;
+    let tweetObjs = null;
 
     let sharedWidth = 0;
     const sharedMargin = {
