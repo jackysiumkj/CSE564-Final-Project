@@ -26,4 +26,4 @@ def mds_data(trump,sp,dowjones,nasdaq,currency,oil_price):
     merge_data = merge_data.apply(LabelEncoder().fit_transform)
     merge_data = pd.DataFrame(StandardScaler().fit_transform(merge_data))
     merge_data = merge_data.astype('float64')
-    return merge_data,label
+    return merge_data, label
