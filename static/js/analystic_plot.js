@@ -85,7 +85,7 @@ function draw_pca() {
     top: 32, 
     right: 8, 
     bottom: 48, 
-    left: 16
+    left: 12
   };
   
   let svg = d3.select('#dataset-svg');
@@ -130,6 +130,7 @@ function draw_pca() {
 
   svg.append('g')
     .attr('class', 'y')
+    .attr('transform', 'translate(' + margin.left + ', 0)')
     .call(yAxis)
   .append('text')
     .attr('x', 8)
